@@ -330,6 +330,9 @@ export const Settings: React.FC<SettingsProps> = ({
                           </div>
                       </div>
                  </div>
+              </>
+          )}
+
       </TabsContent>
     </Tabs>
     </div>
