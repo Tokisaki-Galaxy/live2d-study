@@ -171,7 +171,7 @@ function App() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="glass border-white/10 w-72">
-              <div className="flex flex-col gap-2 mt-8">
+              <div className="flex flex-col gap-2 mt-8 px-6">
                 <Button
                   variant="ghost"
                   onClick={() => togglePanel('scene')}
@@ -401,8 +401,9 @@ function App() {
         {/* Mobile panels */}
         <div className="lg:hidden">
           <Sheet open={showTasks} onOpenChange={setShowTasks}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh]">
-              <div className="h-full py-4">
+            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="h-full p-6 pt-10">
                 <TaskList
                   tasks={tasks.tasks}
                   onAddTask={tasks.addTask}
@@ -417,8 +418,9 @@ function App() {
           </Sheet>
 
           <Sheet open={showMusic} onOpenChange={setShowMusic}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh]">
-              <div className="h-full py-4">
+            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="h-full p-6 pt-10">
                 <MusicPlayer
                   isPlaying={music.isPlaying}
                   currentTrack={music.currentTrack}
@@ -438,8 +440,9 @@ function App() {
           </Sheet>
 
           <Sheet open={showStory} onOpenChange={setShowStory}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh]">
-              <div className="h-full py-4">
+            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="h-full p-6 pt-10">
                 <StoryReader
                   stories={stories}
                   onClose={() => setShowStory(false)}
@@ -449,8 +452,9 @@ function App() {
           </Sheet>
 
           <Sheet open={showSettings} onOpenChange={setShowSettings}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh]">
-              <div className="h-full py-4">
+            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="h-full p-6 pt-10">
                 <SettingsPanel
                   settings={timerSettings}
                   onUpdateSettings={handleUpdateSettings}
@@ -461,8 +465,9 @@ function App() {
           </Sheet>
 
           <Sheet open={showSceneSelector} onOpenChange={setShowSceneSelector}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh]">
-              <div className="h-full py-4">
+            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="h-full p-6 pt-10">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-white font-semibold">Select Scene</h3>
                 </div>
