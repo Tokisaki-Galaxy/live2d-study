@@ -6,7 +6,7 @@ import type { CharacterConfig, CharacterMood } from '@/types';
 
 // Expose PIXI for the library
 (window as any).PIXI = PIXI;
-Live2DModel.registerTicker(PIXI.Ticker.shared as any);
+Live2DModel.registerTicker(PIXI.Ticker);
 
 interface Live2DContainerProps {
   config: CharacterConfig;
