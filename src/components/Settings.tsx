@@ -206,7 +206,7 @@ export const Settings: React.FC<SettingsProps> = ({
             {/* Character Type Switch */}
             <div className="space-y-3">
                 <Label className="text-white">Character Model Type</Label>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-3 gap-2">
                     <Button 
                       variant={localCharConfig.type === 'svg' ? 'default' : 'secondary'}
                       onClick={() => updateCharConfig({ type: 'svg' })}
@@ -221,10 +221,17 @@ export const Settings: React.FC<SettingsProps> = ({
                     >
                         Live2D
                     </Button>
+                    <Button 
+                      variant={localCharConfig.type === 'spine' ? 'default' : 'secondary'}
+                      onClick={() => updateCharConfig({ type: 'spine' })}
+                      className="flex-1"
+                    >
+                        Spine
+                    </Button>
                 </div>
             </div>
 
-            {localCharConfig.type === 'live2d' && (
+            {(localCharConfig.type === 'live2d' || localCharConfig.type === 'spine') && (
                 <>
                   {/* Import Model */}
                   <div className="space-y-3 p-4 bg-white/5 rounded-lg border border-white/10">
@@ -233,22 +240,24 @@ export const Settings: React.FC<SettingsProps> = ({
                       </Label>
                       
                       <div className="grid grid-cols-1 gap-3">
-                           <div className="flex items-center gap-2">
-                              <Input 
-                                  placeholder="Paste .model3.json URL"
-                                  value={localCharConfig.modelUrl || ''}
-                                  onChange={(e) => handleUrlChange(e.target.value)}
-                                  onPointerDown={(e) => e.stopPropagation()}
-                                  onKeyDown={(e) => e.stopPropagation()}
-                                className="bg-black/20 border-white/10 text-xs relative z-50 pointer-events-auto"
-                              />
-                          </div>
+                           {localCharConfig.type === 'live2d' && (
+                             <div className="flex items-center gap-2">
+                               <Input 
+                                   placeholder="Paste .model3.json URL"
+                                   value={localCharConfig.modelUrl || ''}
+                                   onChange={(e) => handleUrlChange(e.target.value)}
+                                   onPointerDown={(e) => e.stopPropagation()}
+                                   onKeyDown={(e) => e.stopPropagation()}
+                                 className="bg-black/20 border-white/10 text-xs relative z-50 pointer-events-auto"
+                               />
+                             </div>
+                           )}
                           <div className="relative">
                               <input 
                                   type="file" 
                                   ref={fileInputRef}
                                   onChange={handleFileUpload}
-                                  accept=".zip,.lpk"
+                                  accept={localCharConfig.type === 'live2d' ? '.zip,.lpk' : '.zip'}
                                   className="hidden"
                               />
                               <Button 
@@ -257,10 +266,14 @@ export const Settings: React.FC<SettingsProps> = ({
                                   onClick={() => fileInputRef.current?.click()}
                               >
                                   <Upload className="w-4 h-4 mr-2" />
-                                  Select Quote .zip / .lpk
+                                  {localCharConfig.type === 'live2d' 
+                                    ? 'Select .zip / .lpk' 
+                                    : 'Select Spine .zip'}
                               </Button>
                               <p className="text-[10px] text-white/30 mt-1 text-center">
-                                  Supported: Standard Live2D Zip or Live2DViewerEX LPK (Non-encrypted)
+                                  {localCharConfig.type === 'live2d' 
+                                    ? 'Supported: Standard Live2D Zip or Live2DViewerEX LPK (Non-encrypted)'
+                                    : 'Supported: Spine zip with .json/.skel, .atlas, and texture files'}
                               </p>
                           </div>
                       </div>
@@ -327,7 +340,9 @@ export const Settings: React.FC<SettingsProps> = ({
                 
                  {/* Motion Mapping (Simple) */}
                  <div className="space-y-3 pt-4 border-t border-white/10">
-                      <Label className="text-white text-sm">Motion Mapping Name</Label>
+                      <Label className="text-white text-sm">
+                        {localCharConfig.type === 'spine' ? 'Animation' : 'Motion'} Mapping Name
+                      </Label>
                       <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-1">
                               <span className="text-[10px] text-white/50 uppercase">Idle</span>

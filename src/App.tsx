@@ -15,6 +15,7 @@ import { Timer } from '@/components/Timer';
 import { TaskList } from '@/components/TaskList';
 import { MusicPlayer } from '@/components/MusicPlayer';
 import { Live2DContainer } from '@/components/Live2DContainer';
+import { SpineContainer } from '@/components/SpineContainer';
 import { Character } from '@/components/Character';
 import { StoryReader } from '@/components/StoryReader';
 import { SceneSelector } from '@/components/SceneSelector';
@@ -236,6 +237,12 @@ function App() {
                  <div className="flex items-center justify-center w-full h-full relative">
                     {character.config.type === 'live2d' ? (
                         <Live2DContainer 
+                            config={character.config}
+                            mood={character.character.mood}
+                            className="w-full h-full"
+                        />
+                    ) : character.config.type === 'spine' ? (
+                        <SpineContainer 
                             config={character.config}
                             mood={character.character.mood}
                             className="w-full h-full"
