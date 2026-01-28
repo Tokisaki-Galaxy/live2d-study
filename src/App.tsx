@@ -260,6 +260,23 @@ function App() {
               {/* Character Section - Left side on desktop */}
               <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative p-8">
                  <div className="flex items-center justify-center w-full h-full relative">
+                    {/* Speech Bubble for Live2D and Spine models */}
+                    {(character.config.type === 'live2d' || character.config.type === 'spine') && character.showBubble && character.character.message && (
+                      <div 
+                        className="absolute top-4 left-1/2 -translate-x-1/2 w-48 lg:w-64 animate-fade-in z-50 pointer-events-none"
+                      >
+                        <div 
+                          className="glass rounded-2xl p-3 lg:p-4 relative pointer-events-auto cursor-pointer" 
+                          onClick={() => character.hideBubble()}
+                        >
+                          <p className="text-white text-xs lg:text-sm text-center leading-relaxed">
+                            {character.character.message}
+                          </p>
+                          {/* Triangle pointer */}
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/10 rotate-45" />
+                        </div>
+                      </div>
+                    )}
                     {character.config.type === 'live2d' ? (
                         <Suspense fallback={
                           <div className="flex items-center justify-center">
