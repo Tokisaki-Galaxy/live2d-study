@@ -36,11 +36,8 @@ export const Settings: React.FC<SettingsProps> = ({
     onUpdateSettings(newSettings);
   };
   
-  const updateCharConfig = <K extends keyof CharacterConfig>(
-      key: K,
-      value: CharacterConfig[K]
-  ) => {
-      const newConfig = { ...localCharConfig, [key]: value };
+  const updateCharConfig = (updates: Partial<CharacterConfig>) => {
+      const newConfig = { ...localCharConfig, ...updates };
       setLocalCharConfig(newConfig);
       onUpdateCharacterConfig(newConfig);
   }
@@ -52,14 +49,18 @@ export const Settings: React.FC<SettingsProps> = ({
       // Create a blob URL for the zip
       const blobUrl = URL.createObjectURL(file);
       
-      updateCharConfig('modelData', blobUrl);
-      updateCharConfig('modelSourceType', 'zip');
-      updateCharConfig('type', 'live2d'); // Force switch to live2d
+      updateCharConfig({
+          modelData: blobUrl,
+          modelSourceType: 'zip',
+          type: 'live2d'
+      });
   };
 
   const handleUrlChange = (url: string) => {
-      updateCharConfig('modelUrl', url);
-      updateCharConfig('modelSourceType', 'url');
+      updateCharConfig({
+          modelUrl: url,
+          modelSourceType: 'url'
+      });
   }
 
   const formatMinutes = (seconds: number) => `${Math.floor(seconds / 60)} min`;
@@ -208,14 +209,14 @@ export const Settings: React.FC<SettingsProps> = ({
                 <div className="flex gap-2">
                     <Button 
                       variant={localCharConfig.type === 'svg' ? 'default' : 'secondary'}
-                      onClick={() => updateCharConfig('type', 'svg')}
+                      onClick={() => updateCharConfig({ type: 'svg' })}
                       className="flex-1"
                     >
                         Original
                     </Button>
                     <Button 
                       variant={localCharConfig.type === 'live2d' ? 'default' : 'secondary'}
-                      onClick={() => updateCharConfig('type', 'live2d')}
+                      onClick={() => updateCharConfig({ type: 'live2d' })}
                       className="flex-1"
                     >
                         Live2D
@@ -278,7 +279,7 @@ export const Settings: React.FC<SettingsProps> = ({
                           </div>
                           <Slider
                               value={[localCharConfig.scale]}
-                              onValueChange={([v]) => updateCharConfig('scale', v)}
+                              onValueChange={([v]) => updateCharConfig({ scale: v })}
                               min={0.1}
                               max={2.0}
                               step={0.1}
@@ -297,7 +298,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         </div>
                         <Slider
                             value={[localCharConfig.position?.x || 0]}
-                            onValueChange={([v]) => updateCharConfig('position', { ...localCharConfig.position, x: v })}
+                            onValueChange={([v]) => updateCharConfig({ position: { ...localCharConfig.position, x: v } })}
                             min={-400}
                             max={400}
                             step={10}
@@ -316,7 +317,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         </div>
                         <Slider
                             value={[localCharConfig.position?.y || 0]}
-                            onValueChange={([v]) => updateCharConfig('position', { ...localCharConfig.position, y: v })}
+                            onValueChange={([v]) => updateCharConfig({ position: { ...localCharConfig.position, y: v } })}
                             min={-400}
                             max={400}
                             step={10}
@@ -333,7 +334,7 @@ export const Settings: React.FC<SettingsProps> = ({
                               <Input 
                                 className="h-7 text-xs bg-black/20 relative z-50 pointer-events-auto" 
                                 value={localCharConfig.motionMapping.idle}
-                                onChange={(e) => updateCharConfig('motionMapping', {...localCharConfig.motionMapping, idle: e.target.value})}
+                                onChange={(e) => updateCharConfig({ motionMapping: { ...localCharConfig.motionMapping, idle: e.target.value } })}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 onKeyDown={(e) => e.stopPropagation()}
                               />
@@ -343,7 +344,7 @@ export const Settings: React.FC<SettingsProps> = ({
                               <Input 
                                 className="h-7 text-xs bg-black/20 relative z-50 pointer-events-auto" 
                                 value={localCharConfig.motionMapping.focus}
-                                onChange={(e) => updateCharConfig('motionMapping', {...localCharConfig.motionMapping, focus: e.target.value})}
+                                onChange={(e) => updateCharConfig({ motionMapping: { ...localCharConfig.motionMapping, focus: e.target.value } })}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 onKeyDown={(e) => e.stopPropagation()}
                               />
@@ -353,7 +354,7 @@ export const Settings: React.FC<SettingsProps> = ({
                               <Input 
                                 className="h-7 text-xs bg-black/20 relative z-50 pointer-events-auto" 
                                 value={localCharConfig.motionMapping.sleep}
-                                onChange={(e) => updateCharConfig('motionMapping', {...localCharConfig.motionMapping, sleep: e.target.value})}
+                                onChange={(e) => updateCharConfig({ motionMapping: { ...localCharConfig.motionMapping, sleep: e.target.value } })}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 onKeyDown={(e) => e.stopPropagation()}
                               />
@@ -363,7 +364,7 @@ export const Settings: React.FC<SettingsProps> = ({
                               <Input 
                                 className="h-7 text-xs bg-black/20 relative z-50 pointer-events-auto" 
                                 value={localCharConfig.motionMapping.tap}
-                                onChange={(e) => updateCharConfig('motionMapping', {...localCharConfig.motionMapping, tap: e.target.value})}
+                                onChange={(e) => updateCharConfig({ motionMapping: { ...localCharConfig.motionMapping, tap: e.target.value } })}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 onKeyDown={(e) => e.stopPropagation()}
                               />
