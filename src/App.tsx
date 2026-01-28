@@ -21,6 +21,7 @@ import { SceneSelector } from "@/components/SceneSelector";
 import { Settings as SettingsPanel } from "@/components/Settings";
 import { VoiceSettings } from "@/components/VoiceSettings";
 import { CharacterTTS } from "@/contexts/TTSContext";
+import { CharacterAI } from "@/components/CharacterAI";
 
 // Lazy load Live2DContainer and SpineContainer to avoid loading large libraries unless needed
 const Live2DContainer = lazy(() =>
@@ -294,6 +295,17 @@ function App() {
                 <CharacterTTS
                   message={character.character.message}
                   showBubble={character.showBubble}
+                />
+                {/* AI Component - generates AI messages when enabled */}
+                <CharacterAI
+                  tasks={tasks.tasks}
+                  timerMode={timer.mode}
+                  timerIsRunning={timer.isRunning}
+                  timeRemaining={timer.timeRemaining}
+                  currentSession={timer.currentSession}
+                  totalSessions={timer.totalSessions}
+                  currentMood={character.currentMood}
+                  showMessage={character.showMessage}
                 />
                 <div className="flex items-center justify-center w-full h-full relative">
                   {/* Speech Bubble for Live2D and Spine models */}

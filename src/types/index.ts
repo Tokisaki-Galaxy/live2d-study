@@ -136,3 +136,32 @@ export interface TTSVoice {
   lang: string;
   localService: boolean;
 }
+
+// AI Model settings for LLM-powered character dialogue
+export interface AIModelSettings {
+  enabled: boolean;
+  apiEndpoint: string; // OpenAI-compatible API endpoint
+  modelName: string; // Model name (e.g., gpt-3.5-turbo, gpt-4)
+  apiKey: string; // API key for authentication
+  systemPrompt: string; // System prompt for character personality
+}
+
+// Context information passed to LLM for generating dialogue
+export interface AIModelContext {
+  tasks: {
+    total: number;
+    completed: number;
+    pending: number;
+    pendingTaskTitles: string[];
+  };
+  timer: {
+    mode: TimerMode;
+    isRunning: boolean;
+    timeRemaining: number;
+    currentSession: number;
+    totalSessions: number;
+  };
+  currentTime: string;
+  sessionStartTime: string | null;
+  sessionDuration: number; // in seconds
+}
