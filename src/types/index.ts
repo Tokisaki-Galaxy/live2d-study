@@ -111,3 +111,12 @@ export interface AppSettings {
   soundEnabled: boolean;
   notificationsEnabled: boolean;
 }
+
+// Timer Events
+export type TimerEvent = 'start' | 'complete' | 'warning';
+
+export interface TimerEventCallbacks {
+  onTimerStart?: () => void;
+  onTimerComplete?: () => void;
+  onTimerWarning?: () => void;
+}

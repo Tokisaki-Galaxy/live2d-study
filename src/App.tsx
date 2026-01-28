@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, lazy, Suspense } from 'react';
 import { 
   ListTodo, 
   Music, 
@@ -6,7 +6,8 @@ import {
   Settings, 
   Image,
   Menu,
-  X
+  X,
+  Volume2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -20,6 +21,10 @@ import { Character } from '@/components/Character';
 import { StoryReader } from '@/components/StoryReader';
 import { SceneSelector } from '@/components/SceneSelector';
 import { Settings as SettingsPanel } from '@/components/Settings';
+import { VoiceSettings } from '@/components/VoiceSettings';
+
+// Lazy load Live2DContainer to avoid loading pixi-live2d-display unless needed
+const Live2DContainer = lazy(() => import('@/components/Live2DContainer').then(module => ({ default: module.Live2DContainer })));
 
 import { useTimer } from '@/hooks/useTimer';
 import { useTasks } from '@/hooks/useTasks';
@@ -46,6 +51,7 @@ function App() {
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [showSceneSelector, setShowSceneSelector] = useState(false);
   const [timerSettings, setTimerSettings] = useState<TimerSettings>(defaultTimerSettings);
 
@@ -77,12 +83,13 @@ function App() {
   }, [character]);
 
   // Toggle panels
-  const togglePanel = (panel: 'tasks' | 'music' | 'story' | 'settings' | 'scene') => {
+  const togglePanel = (panel: 'tasks' | 'music' | 'story' | 'settings' | 'voice' | 'scene') => {
     // Close all other panels
     setShowTasks(false);
     setShowMusic(false);
     setShowStory(false);
     setShowSettings(false);
+    setShowVoiceSettings(false);
     setShowSceneSelector(false);
 
     // Open selected panel
@@ -98,6 +105,9 @@ function App() {
         break;
       case 'settings':
         setShowSettings(true);
+        break;
+      case 'voice':
+        setShowVoiceSettings(true);
         break;
       case 'scene':
         setShowSceneSelector(true);
@@ -168,6 +178,14 @@ function App() {
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>
+            <Button
+              variant="ghost"
+              onClick={() => togglePanel('voice')}
+              className="text-white/70 hover:text-white hover:bg-white/10"
+            >
+              <Volume2 className="w-4 h-4 mr-2" />
+              Voice
+            </Button>
           </nav>
 
           {/* Mobile menu */}
@@ -219,6 +237,14 @@ function App() {
                   <Settings className="w-4 h-4 mr-3" />
                   Settings
                 </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => togglePanel('voice')}
+                  className="justify-start text-white/70 hover:text-white hover:bg-white/10"
+                >
+                  <Volume2 className="w-4 h-4 mr-3" />
+                  Voice
+                </Button>
               </div>
             </SheetContent>
           </Sheet>
@@ -247,6 +273,17 @@ function App() {
                             mood={character.character.mood}
                             className="w-full h-full"
                         />
+                        <Suspense fallback={
+                          <div className="flex items-center justify-center">
+                            <div className="text-white/50">Loading Live2D...</div>
+                          </div>
+                        }>
+                          <Live2DContainer 
+                              config={character.config}
+                              mood={character.character.mood}
+                              className="w-full h-full"
+                          />
+                        </Suspense>
                     ) : (
                         <Character
                           mood={character.character.mood}
@@ -344,6 +381,14 @@ function App() {
                   </div>
                 )}
 
+                {showVoiceSettings && (
+                  <div className="h-full animate-slide-in">
+                    <VoiceSettings
+                      onClose={() => setShowVoiceSettings(false)}
+                    />
+                  </div>
+                )}
+
                 {showSceneSelector && (
                   <div className="h-full animate-slide-in">
                     <div className="flex flex-col h-full">
@@ -367,7 +412,7 @@ function App() {
                 )}
 
                 {/* Default view - Quick stats */}
-                {!showTasks && !showMusic && !showStory && !showSettings && !showSceneSelector && (
+                {!showTasks && !showMusic && !showStory && !showSettings && !showVoiceSettings && !showSceneSelector && (
                   <div className="h-full flex flex-col items-center justify-center text-center">
                     <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
                       <span className="text-4xl">✨</span>
@@ -486,6 +531,17 @@ function App() {
                   onUpdateSettings={handleUpdateSettings}
                   onUpdateCharacterConfig={handleUpdateCharacterConfig}
                   onClose={() => setShowSettings(false)}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          <Sheet open={showVoiceSettings} onOpenChange={setShowVoiceSettings}>
+            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
+              <div className="h-full p-6 pt-10">
+                <VoiceSettings
+                  onClose={() => setShowVoiceSettings(false)}
                 />
               </div>
             </SheetContent>
