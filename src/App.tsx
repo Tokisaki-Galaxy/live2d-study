@@ -99,12 +99,12 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-all duration-1000 ${sceneGradient}`}>
+    <div className={`h-screen w-screen overflow-hidden flex flex-col transition-all duration-1000 ${sceneGradient}`}>
       {/* Background overlay */}
-      <div className="fixed inset-0 bg-black/20" />
+      <div className="fixed inset-0 bg-black/20 pointer-events-none" />
 
       {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
+      <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
         <header className="flex items-center justify-between p-4 sm:p-6">
           <div className="flex items-center gap-3">
@@ -216,47 +216,53 @@ function App() {
         </header>
 
         {/* Main area */}
-        <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
-          <div className="w-full max-w-6xl grid lg:grid-cols-3 gap-8 items-start">
-            {/* Left panel - Timer */}
-            <div className="lg:col-span-2">
-              <div className="glass rounded-3xl p-8 sm:p-12">
-                <Timer
-                  mode={timer.mode}
-                  formattedTime={timer.formattedTime}
-                  timeRemaining={timer.timeRemaining}
-                  totalTime={
-                    timer.mode === 'work'
-                      ? timerSettings.workDuration
-                      : timer.mode === 'shortBreak'
-                      ? timerSettings.shortBreakDuration
-                      : timerSettings.longBreakDuration
-                  }
-                  isRunning={timer.isRunning}
-                  currentSession={timer.currentSession}
-                  totalSessions={timer.totalSessions}
-                  onStart={timer.start}
-                  onPause={timer.pause}
-                  onReset={timer.reset}
-                  onSkip={timer.skip}
-                  onModeChange={handleModeChange}
-                />
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-8 min-h-0">
+          <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-8 h-full max-h-[650px]">
+            {/* Left panel - Character & Timer */}
+            <div className="lg:col-span-2 glass rounded-3xl p-0 flex flex-col lg:flex-row overflow-hidden relative">
+              
+              {/* Character Section - Left side on desktop */}
+              <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative">
+                 <div className="transform scale-[2] lg:scale-[2.5] hover:scale-[2.6] transition-transform duration-500">
+                    <Character
+                      mood={character.character.mood}
+                      message={character.character.message}
+                      showBubble={character.showBubble}
+                      onClick={() => character.showMessage('Keep going! You\'re doing great! ✨')}
+                    />
+                 </div>
               </div>
 
-              {/* Character */}
-              <div className="mt-8 flex justify-center">
-                <Character
-                  mood={character.character.mood}
-                  message={character.character.message}
-                  showBubble={character.showBubble}
-                  onClick={() => character.showMessage('Keep going! You\'re doing great! ✨')}
-                />
+              {/* Timer Section - Right side on desktop */}
+              <div className="flex-1 flex items-center justify-center p-8">
+                  <div className="transform scale-100 lg:scale-110">
+                    <Timer
+                      mode={timer.mode}
+                      formattedTime={timer.formattedTime}
+                      timeRemaining={timer.timeRemaining}
+                      totalTime={
+                        timer.mode === 'work'
+                          ? timerSettings.workDuration
+                          : timer.mode === 'shortBreak'
+                          ? timerSettings.shortBreakDuration
+                          : timerSettings.longBreakDuration
+                      }
+                      isRunning={timer.isRunning}
+                      currentSession={timer.currentSession}
+                      totalSessions={timer.totalSessions}
+                      onStart={timer.start}
+                      onPause={timer.pause}
+                      onReset={timer.reset}
+                      onSkip={timer.skip}
+                      onModeChange={handleModeChange}
+                    />
+                  </div>
               </div>
             </div>
 
             {/* Right panel - Side panels */}
-            <div className="hidden lg:block">
-              <div className="glass rounded-3xl p-6 h-[600px]">
+            <div className="hidden lg:block h-full">
+              <div className="glass rounded-3xl p-6 h-full">
                 {showTasks && (
                   <div className="h-full animate-slide-in">
                     <TaskList
@@ -464,12 +470,6 @@ function App() {
           </Sheet>
         </div>
 
-        {/* Footer */}
-        <footer className="p-4 text-center">
-          <p className="text-white/30 text-xs">
-            Chill With You: Lo-Fi Story • Stay focused, stay relaxed
-          </p>
-        </footer>
       </div>
     </div>
   );
