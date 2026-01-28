@@ -152,12 +152,12 @@ export const Live2DContainer: React.FC<Live2DContainerProps> = ({
           modelRef.current = model;
 
           // Apply transforms
-          // Center the model roughly
+          // Use top-center anchor so the head always stays at the top when scaling
+          model.anchor.set(0.5, 0);
           model.position.set(
             400 + (config.position?.x || 0),
-            400 + (config.position?.y || 0),
+            0 + (config.position?.y || 0),
           );
-          model.anchor.set(0.5, 0.5);
           model.scale.set(config.scale);
 
           // Initial motion
@@ -185,7 +185,7 @@ export const Live2DContainer: React.FC<Live2DContainerProps> = ({
       modelRef.current.scale.set(config.scale);
       modelRef.current.position.set(
         400 + (config.position?.x || 0),
-        400 + (config.position?.y || 0),
+        0 + (config.position?.y || 0),
       );
     }
   }, [config.scale, config.position?.x, config.position?.y]);

@@ -69,6 +69,7 @@ function App() {
   const [showSceneSelector, setShowSceneSelector] = useState(false);
   const [timerSettings, setTimerSettings] =
     useState<TimerSettings>(defaultTimerSettings);
+  const [hasStartedOnce, setHasStartedOnce] = useState(false);
 
   // Hooks
   const timer = useTimer(timerSettings);
@@ -143,7 +144,13 @@ function App() {
     }
   };
 
-  const isFocusMode = timer.isRunning;
+  // Track when timer starts for the first time to hide welcome panel permanently
+  const handleStart = useCallback(() => {
+    timer.start();
+    setHasStartedOnce(true);
+  }, [timer]);
+
+  const isFocusMode = hasStartedOnce;
 
   return (
     <div
@@ -389,7 +396,7 @@ function App() {
                     isRunning={timer.isRunning}
                     currentSession={timer.currentSession}
                     totalSessions={timer.totalSessions}
-                    onStart={timer.start}
+                    onStart={handleStart}
                     onPause={timer.pause}
                     onReset={timer.reset}
                     onSkip={timer.skip}
