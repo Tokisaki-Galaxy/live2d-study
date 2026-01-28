@@ -21,18 +21,7 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
   });
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const warningPlayedRef = useRef<boolean>(false); // Track if 5-min warning was played
-
-  // Initialize audio
-  useEffect(() => {
-    audioRef.current = new Audio();
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
 
   const getDurationForMode = useCallback((mode: TimerMode): number => {
     switch (mode) {
@@ -106,8 +95,8 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
     if (state.isRunning) {
       intervalRef.current = setInterval(() => {
         setState(prev => {
-          // Check for 5-minute warning (300 seconds)
-          if (prev.timeRemaining === 300 && !warningPlayedRef.current) {
+          // Check for 5-minute warning (300 seconds) - use range to avoid missing due to timing
+          if (prev.timeRemaining <= 300 && prev.timeRemaining > 299 && !warningPlayedRef.current) {
             soundManager.play('timer-warning');
             warningPlayedRef.current = true;
           }

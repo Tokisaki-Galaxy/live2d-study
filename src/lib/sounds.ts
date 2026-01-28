@@ -49,7 +49,7 @@ class SoundManager {
     const ctx = this.getAudioContext();
     const now = ctx.currentTime;
 
-    // Play a nice chord (C major -> G major)
+    // Play a nice chord (C major -> D major)
     const chord1 = [523.25, 659.25, 783.99]; // C5, E5, G5
     const chord2 = [587.33, 739.99, 880.00]; // D5, F#5, A5
 

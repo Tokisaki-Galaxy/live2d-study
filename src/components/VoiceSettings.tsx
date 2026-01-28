@@ -23,6 +23,7 @@ export const VoiceSettings: React.FC<VoiceSettingsProps> = ({ onClose }) => {
           size="icon"
           onClick={onClose}
           className="text-white/50 hover:text-white"
+          aria-label="Close voice settings"
         >
           <X className="w-5 h-5" />
         </Button>
