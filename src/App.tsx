@@ -310,6 +310,7 @@ function App() {
                       onSelectTrack={music.selectTrack}
                       onVolumeChange={music.setVolume}
                       onAddTrack={music.addCustomTrack}
+                      onAddFolder={music.addFolder}
                       onRemoveTrack={music.removeTrack}
                     />
                   </div>
@@ -449,6 +450,7 @@ function App() {
                   onSelectTrack={music.selectTrack}
                   onVolumeChange={music.setVolume}
                   onAddTrack={music.addCustomTrack}
+                  onAddFolder={music.addFolder}
                   onRemoveTrack={music.removeTrack}
                 />
               </div>

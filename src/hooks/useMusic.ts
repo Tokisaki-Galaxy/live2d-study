@@ -194,6 +194,25 @@ export function useMusic() {
     }));
   }, []);
 
+  const addFolder = useCallback((files: FileList) => {
+    const audioFiles = Array.from(files).filter(file => 
+      file.type.startsWith('audio/')
+    );
+    
+    const newTracks: Track[] = audioFiles.map((file, index) => ({
+      id: `${Date.now()}-${index}`,
+      title: file.name.replace(/\.[^/.]+$/, ''),
+      artist: 'Custom',
+      url: URL.createObjectURL(file),
+      duration: 0,
+    }));
+
+    setState(prev => ({
+      ...prev,
+      playlist: [...prev.playlist, ...newTracks],
+    }));
+  }, []);
+
   const removeTrack = useCallback((id: string) => {
     setState(prev => {
       const newPlaylist = prev.playlist.filter(t => t.id !== id);
@@ -230,6 +249,7 @@ export function useMusic() {
     selectTrack,
     setVolume,
     addCustomTrack,
+    addFolder,
     removeTrack,
   };
 }

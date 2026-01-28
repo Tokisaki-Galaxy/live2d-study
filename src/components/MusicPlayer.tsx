@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Upload, Trash2, Music } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Upload, Trash2, Music, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -17,6 +17,7 @@ interface MusicPlayerProps {
   onSelectTrack: (index: number) => void;
   onVolumeChange: (volume: number) => void;
   onAddTrack: (file: File) => void;
+  onAddFolder: (files: FileList) => void;
   onRemoveTrack: (id: string) => void;
 }
 
@@ -32,9 +33,11 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
   onSelectTrack,
   onVolumeChange,
   onAddTrack,
+  onAddFolder,
   onRemoveTrack,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const previousVolume = useRef(volume);
 
@@ -46,6 +49,17 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
     // Reset input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const handleFolderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      onAddFolder(files);
+    }
+    // Reset input
+    if (folderInputRef.current) {
+      folderInputRef.current.value = '';
     }
   };
 
@@ -158,20 +172,38 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-white/70 text-sm font-medium">Playlist</h4>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            className="h-7 text-xs text-white/60 hover:text-white hover:bg-white/10"
-          >
-            <Upload className="w-3.5 h-3.5 mr-1" />
-            Add
-          </Button>
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              className="h-7 text-xs text-white/60 hover:text-white hover:bg-white/10"
+            >
+              <Upload className="w-3.5 h-3.5 mr-1" />
+              Add
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => folderInputRef.current?.click()}
+              className="h-7 text-xs text-white/60 hover:text-white hover:bg-white/10"
+            >
+              <FolderOpen className="w-3.5 h-3.5 mr-1" />
+              Folder
+            </Button>
+          </div>
           <input
             ref={fileInputRef}
             type="file"
             accept="audio/*"
             onChange={handleFileUpload}
+            className="hidden"
+          />
+          <input
+            ref={folderInputRef}
+            type="file"
+            {...{ webkitdirectory: '', directory: '', mozdirectory: '' } as any}
+            onChange={handleFolderUpload}
             className="hidden"
           />
         </div>
