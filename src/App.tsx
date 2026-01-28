@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, lazy, Suspense } from 'react';
 import { 
   ListTodo, 
   Music, 
@@ -14,11 +14,13 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Timer } from '@/components/Timer';
 import { TaskList } from '@/components/TaskList';
 import { MusicPlayer } from '@/components/MusicPlayer';
-import { Live2DContainer } from '@/components/Live2DContainer';
 import { Character } from '@/components/Character';
 import { StoryReader } from '@/components/StoryReader';
 import { SceneSelector } from '@/components/SceneSelector';
 import { Settings as SettingsPanel } from '@/components/Settings';
+
+// Lazy load Live2DContainer to avoid loading pixi-live2d-display unless needed
+const Live2DContainer = lazy(() => import('@/components/Live2DContainer').then(module => ({ default: module.Live2DContainer })));
 
 import { useTimer } from '@/hooks/useTimer';
 import { useTasks } from '@/hooks/useTasks';
@@ -235,11 +237,17 @@ function App() {
               <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative p-8">
                  <div className="flex items-center justify-center w-full h-full relative">
                     {character.config.type === 'live2d' ? (
-                        <Live2DContainer 
-                            config={character.config}
-                            mood={character.character.mood}
-                            className="w-full h-full"
-                        />
+                        <Suspense fallback={
+                          <div className="flex items-center justify-center">
+                            <div className="text-white/50">Loading Live2D...</div>
+                          </div>
+                        }>
+                          <Live2DContainer 
+                              config={character.config}
+                              mood={character.character.mood}
+                              className="w-full h-full"
+                          />
+                        </Suspense>
                     ) : (
                         <Character
                           mood={character.character.mood}

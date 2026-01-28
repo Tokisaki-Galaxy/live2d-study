@@ -6,7 +6,13 @@ import type { CharacterConfig, CharacterMood } from '@/types';
 
 // Expose PIXI for the library
 (window as any).PIXI = PIXI;
-Live2DModel.registerTicker(PIXI.Ticker as any);
+
+// Register ticker - wrapped in try-catch to handle cases where Live2D runtime isn't loaded
+try {
+  Live2DModel.registerTicker(PIXI.Ticker as any);
+} catch (error) {
+  console.warn('Live2D runtime not available:', error);
+}
 
 interface Live2DContainerProps {
   config: CharacterConfig;
