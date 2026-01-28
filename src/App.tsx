@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Timer } from '@/components/Timer';
 import { TaskList } from '@/components/TaskList';
 import { MusicPlayer } from '@/components/MusicPlayer';
+import { Live2DContainer } from '@/components/Live2DContainer';
 import { Character } from '@/components/Character';
 import { StoryReader } from '@/components/StoryReader';
 import { SceneSelector } from '@/components/SceneSelector';
@@ -26,7 +27,7 @@ import { useCharacter } from '@/hooks/useCharacter';
 import { getUnlockedStories } from '@/data/stories';
 import { scenes } from '@/data/scenes';
 
-import type { TimerSettings, SceneType, TimerMode } from '@/types';
+import type { TimerSettings, SceneType, TimerMode, CharacterConfig } from '@/types';
 
 const defaultTimerSettings: TimerSettings = {
   workDuration: 25 * 60,
@@ -68,6 +69,11 @@ function App() {
   const handleUpdateSettings = useCallback((newSettings: TimerSettings) => {
     setTimerSettings(newSettings);
   }, []);
+  
+  // Update character settings
+  const handleUpdateCharacterConfig = useCallback((newConfig: CharacterConfig) => {
+    character.updateConfig(newConfig);
+  }, [character]);
 
   // Toggle panels
   const togglePanel = (panel: 'tasks' | 'music' | 'story' | 'settings' | 'scene') => {
@@ -227,14 +233,22 @@ function App() {
               
               {/* Character Section - Left side on desktop */}
               <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative p-8">
-                 <div className="flex items-center justify-center w-full h-full">
-                    <Character
-                      mood={character.character.mood}
-                      message={character.character.message}
-                      showBubble={character.showBubble}
-                      onClick={() => character.showMessage('Keep going! You\'re doing great! ✨')}
-                      className="w-48 h-48 lg:w-80 lg:h-80"
-                    />
+                 <div className="flex items-center justify-center w-full h-full relative">
+                    {character.config.type === 'live2d' ? (
+                        <Live2DContainer 
+                            config={character.config}
+                            mood={character.character.mood}
+                            className="w-full h-full"
+                        />
+                    ) : (
+                        <Character
+                          mood={character.character.mood}
+                          message={character.character.message}
+                          showBubble={character.showBubble}
+                          onClick={() => character.showMessage('Keep going! You\'re doing great! ✨')}
+                          className="w-48 h-48 lg:w-80 lg:h-80"
+                        />
+                    )}
                  </div>
               </div>
 
@@ -314,7 +328,9 @@ function App() {
                   <div className="h-full animate-slide-in">
                     <SettingsPanel
                       settings={timerSettings}
+                      characterConfig={character.config}
                       onUpdateSettings={handleUpdateSettings}
+                      onUpdateCharacterConfig={handleUpdateCharacterConfig}
                       onClose={() => setShowSettings(false)}
                     />
                   </div>
@@ -457,7 +473,9 @@ function App() {
               <div className="h-full p-6 pt-10">
                 <SettingsPanel
                   settings={timerSettings}
+                  characterConfig={character.config}
                   onUpdateSettings={handleUpdateSettings}
+                  onUpdateCharacterConfig={handleUpdateCharacterConfig}
                   onClose={() => setShowSettings(false)}
                 />
               </div>

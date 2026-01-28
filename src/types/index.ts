@@ -49,6 +49,23 @@ export interface Scene {
 // Character types
 export type CharacterMood = 'happy' | 'focus' | 'sleep' | 'encourage';
 
+export type CharacterType = 'svg' | 'live2d' | 'spine';
+
+export interface CharacterConfig {
+  type: CharacterType;
+  modelUrl?: string; // For URL import
+  modelData?: string;  // For generic file content (Blob URL of the zip)
+  modelSourceType?: 'url' | 'zip';
+  scale: number;
+  position: { x: number; y: number };
+  motionMapping: {
+    idle: string;   // Maps to 'happy' / regular state
+    focus: string;  // Maps to 'focus'
+    sleep: string;  // Maps to 'sleep'
+    tap: string;    // Maps to 'encourage' / interaction
+  };
+}
+
 export interface Character {
   id: string;
   name: string;

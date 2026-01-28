@@ -50,6 +50,18 @@ const getRandomMessage = (mood: CharacterMood): string => {
   return messages[Math.floor(Math.random() * messages.length)];
 };
 
+const defaultCharacterConfig: CharacterConfig = {
+  type: 'svg',
+  scale: 0.1,
+  position: { x: 0, y: 0 },
+  motionMapping: {
+      idle: 'Idle',
+      focus: 'Focus',
+      sleep: 'Sleep',
+      tap: 'TapBody',
+  }
+}
+
 export function useCharacter(timerMode: TimerMode, isRunning: boolean, sessionsCompleted: number) {
   const [character, setCharacter] = useState<Character>({
     id: 'momo',
@@ -57,6 +69,29 @@ export function useCharacter(timerMode: TimerMode, isRunning: boolean, sessionsC
     mood: 'happy',
     message: getRandomMessage('happy'),
   });
+
+  // Persist Live2D Config
+  // In a real app we would use localStorage more robustly
+  const [config, setConfig] = useState<CharacterConfig>(() => {
+      try {
+        const saved = localStorage.getItem('character-config');
+        return saved ? JSON.parse(saved) : defaultCharacterConfig;
+      } catch {
+        return defaultCharacterConfig;
+      }
+  });
+
+  const updateConfig = useCallback((newConfig: CharacterConfig) => {
+    setConfig(newConfig);
+    // Don't save Generic Blobs to local storage, they expire.
+    // We only save types/mappings. 
+    // Re-loading the file on refresh is an inevitable user action for security reasons
+    // UNLESS we use IndexedDB. For now, we will save only partial config.
+    
+    // Create a version without the big blob data
+    const { modelData, ...rest } = newConfig;
+    localStorage.setItem('character-config', JSON.stringify(rest));
+  }, []);
 
   const [showBubble, setShowBubble] = useState(true);
 
@@ -113,5 +148,7 @@ export function useCharacter(timerMode: TimerMode, isRunning: boolean, sessionsC
     setMood,
     showMessage,
     hideBubble,
+    config,       // Export config
+    updateConfig, // Export updater
   };
 }
