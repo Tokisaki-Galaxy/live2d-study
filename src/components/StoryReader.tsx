@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { BookOpen, Lock, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import type { StoryChapter } from '@/types';
+import { useState } from "react";
+import { BookOpen, Lock, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { StoryChapter } from "@/types";
 
 interface StoryReaderProps {
   stories: StoryChapter[];
@@ -14,19 +14,20 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
   onClose,
 }) => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
-  
-  const unlockedStories = stories.filter(s => s.unlocked);
-  const currentStory = unlockedStories[currentChapterIndex] || unlockedStories[0];
-  
+
+  const unlockedStories = stories.filter((s) => s.unlocked);
+  const currentStory =
+    unlockedStories[currentChapterIndex] || unlockedStories[0];
+
   const handlePrev = () => {
     if (currentChapterIndex > 0) {
-      setCurrentChapterIndex(prev => prev - 1);
+      setCurrentChapterIndex((prev) => prev - 1);
     }
   };
 
   const handleNext = () => {
     if (currentChapterIndex < unlockedStories.length - 1) {
-      setCurrentChapterIndex(prev => prev + 1);
+      setCurrentChapterIndex((prev) => prev + 1);
     }
   };
 
@@ -81,7 +82,7 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
-        
+
         <div className="flex-1 flex gap-1 justify-center">
           {stories.map((story, index) => (
             <div
@@ -89,14 +90,14 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
               className={`w-2 h-2 rounded-full transition-all ${
                 story.unlocked
                   ? index === currentChapterIndex
-                    ? 'bg-amber-400 w-4'
-                    : 'bg-white/30'
-                  : 'bg-white/10'
+                    ? "bg-amber-400 w-4"
+                    : "bg-white/30"
+                  : "bg-white/10"
               }`}
             />
           ))}
         </div>
-        
+
         <Button
           variant="ghost"
           size="icon"
@@ -119,7 +120,7 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
       {/* Story content */}
       <ScrollArea className="flex-1 -mx-2 px-2">
         <div className="prose prose-invert prose-sm max-w-none">
-          {currentStory.content.split('\n\n').map((paragraph, index) => (
+          {currentStory.content.split("\n\n").map((paragraph, index) => (
             <p key={index} className="text-white/80 leading-relaxed mb-4">
               {paragraph}
             </p>
@@ -130,10 +131,13 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
       {/* Footer */}
       <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
         <p className="text-white/40 text-xs">
-          {stories.filter(s => s.unlocked).length} of {stories.length} chapters unlocked
+          {stories.filter((s) => s.unlocked).length} of {stories.length}{" "}
+          chapters unlocked
         </p>
         <p className="text-white/40 text-xs">
-          Next unlock: {stories.find(s => !s.unlocked)?.unlockAt || 'All unlocked'} sessions
+          Next unlock:{" "}
+          {stories.find((s) => !s.unlocked)?.unlockAt || "All unlocked"}{" "}
+          sessions
         </p>
       </div>
     </div>

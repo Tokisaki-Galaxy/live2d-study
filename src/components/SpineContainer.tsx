@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as PIXI from 'pixi.js';
-import { Spine } from 'pixi-spine';
-import { SpineLoader } from '@/lib/spine-loader';
-import type { CharacterConfig, CharacterMood } from '@/types';
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import * as PIXI from "pixi.js";
+import { Spine } from "pixi-spine";
+import { SpineLoader } from "@/lib/spine-loader";
+import type { CharacterConfig, CharacterMood } from "@/types";
 
 // Expose PIXI for the library
-(window as any).PIXI = PIXI;
+window.PIXI = PIXI;
 
 interface SpineContainerProps {
   config: CharacterConfig;
@@ -16,13 +16,55 @@ interface SpineContainerProps {
 export const SpineContainer: React.FC<SpineContainerProps> = ({
   config,
   mood,
-  className
+  className,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const appRef = useRef<PIXI.Application | null>(null);
   const spineRef = useRef<Spine | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Play mood animation function - defined with useCallback to ensure stable reference
+  const playMoodAnimation = useCallback(
+    (currentMood: CharacterMood) => {
+      if (!spineRef.current || !config.motionMapping) return;
+
+      let animationName = "idle";
+
+      // Map mood to user-defined animation name
+      switch (currentMood) {
+        case "happy":
+          animationName = config.motionMapping.idle || "idle";
+          break;
+        case "focus":
+          animationName = config.motionMapping.focus || "focus";
+          break;
+        case "sleep":
+          animationName = config.motionMapping.sleep || "sleep";
+          break;
+        case "encourage":
+          animationName = config.motionMapping.tap || "tap";
+          break;
+      }
+
+      // Try to play the animation
+      try {
+        if (spineRef.current.state.hasAnimation(animationName)) {
+          spineRef.current.state.setAnimation(0, animationName, true); // Loop
+        } else {
+          console.warn(`Animation ${animationName} not found in Spine model`);
+          // Fallback to first available animation
+          const animations = spineRef.current.spineData.animations;
+          if (animations.length > 0) {
+            spineRef.current.state.setAnimation(0, animations[0].name, true);
+          }
+        }
+      } catch (err) {
+        console.warn(`Failed to play animation ${animationName}:`, err);
+      }
+    },
+    [config.motionMapping],
+  );
 
   // Initialize PIXI Application
   useEffect(() => {
@@ -52,50 +94,62 @@ export const SpineContainer: React.FC<SpineContainerProps> = ({
 
     const loadModel = async () => {
       if (!appRef.current || !config) return;
-      
+
       // Clear previous model
       if (spineRef.current) {
-        appRef.current.stage.removeChild(spineRef.current as any);
+        appRef.current.stage.removeChild(
+          spineRef.current as PIXI.DisplayObject,
+        );
         spineRef.current.destroy({ children: true });
         spineRef.current = null;
       }
-      
+
       // Don't try loading if we have nothing
-      if (config.modelSourceType === 'zip' && !config.modelData) return;
-      if (config.modelSourceType === 'url' && !config.modelUrl) return;
+      if (config.modelSourceType === "zip" && !config.modelData) return;
+      if (config.modelSourceType === "url" && !config.modelUrl) return;
 
       setLoading(true);
       setError(null);
 
       try {
         let spine: Spine | null = null;
-        console.log('Loading Spine Model...', config.modelSourceType);
+        console.log("Loading Spine Model...", config.modelSourceType);
 
-        if (config.modelSourceType === 'zip' && config.modelData) {
+        if (config.modelSourceType === "zip" && config.modelData) {
           // Fetch the blob from the Blob URL string
           const response = await fetch(config.modelData);
           const blob = await response.blob();
           spine = await SpineLoader.loadSpineFromZip(blob);
-        } else if (config.modelSourceType === 'url' && config.modelUrl) {
+        } else if (config.modelSourceType === "url" && config.modelUrl) {
           // For URL loading, we'd need to implement a different loader
           // For now, show a message that URL is not supported for Spine
-          throw new Error('URL loading not yet implemented for Spine models. Please use zip file.');
+          throw new Error(
+            "URL loading not yet implemented for Spine models. Please use zip file.",
+          );
         }
 
         if (active && spine && appRef.current) {
-          appRef.current.stage.addChild(spine as any);
+          appRef.current.stage.addChild(spine as PIXI.DisplayObject);
           spineRef.current = spine;
-          
+
           // Apply transforms
-          spine.position.set(400 + (config.position?.x || 0), 400 + (config.position?.y || 0)); 
+          spine.position.set(
+            400 + (config.position?.x || 0),
+            400 + (config.position?.y || 0),
+          );
           spine.scale.set(config.scale);
-          
+
           // Initial animation
           playMoodAnimation(mood);
         }
       } catch (err) {
-        console.error('Failed to load Spine model:', err);
-        if (active) setError(err instanceof Error ? err.message : 'Failed to load model. Please check the file format.');
+        console.error("Failed to load Spine model:", err);
+        if (active)
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Failed to load model. Please check the file format.",
+          );
       } finally {
         if (active) setLoading(false);
       }
@@ -106,72 +160,37 @@ export const SpineContainer: React.FC<SpineContainerProps> = ({
     return () => {
       active = false;
     };
-  }, [config.modelUrl, config.modelData, config.modelSourceType]);
+  }, [config, mood, playMoodAnimation]);
 
   // Apply transforms when config changes
   useEffect(() => {
-      if (spineRef.current) {
-          spineRef.current.scale.set(config.scale);
-          spineRef.current.position.set(400 + (config.position?.x || 0), 400 + (config.position?.y || 0));
-      }
+    if (spineRef.current) {
+      spineRef.current.scale.set(config.scale);
+      spineRef.current.position.set(
+        400 + (config.position?.x || 0),
+        400 + (config.position?.y || 0),
+      );
+    }
   }, [config.scale, config.position?.x, config.position?.y]);
 
   // Handle Mood Changes -> Play Animation
   useEffect(() => {
     playMoodAnimation(mood);
-  }, [mood]);
-
-  const playMoodAnimation = (currentMood: CharacterMood) => {
-    if (!spineRef.current || !config.motionMapping) return;
-
-    let animationName = 'idle';
-    
-    // Map mood to user-defined animation name
-    switch (currentMood) {
-      case 'happy': 
-        animationName = config.motionMapping.idle || 'idle'; 
-        break;
-      case 'focus': 
-        animationName = config.motionMapping.focus || 'focus'; 
-        break;
-      case 'sleep': 
-        animationName = config.motionMapping.sleep || 'sleep'; 
-        break;
-      case 'encourage': 
-        animationName = config.motionMapping.tap || 'tap'; 
-        break;
-    }
-
-    // Try to play the animation
-    try {
-      if (spineRef.current.state.hasAnimation(animationName)) {
-        spineRef.current.state.setAnimation(0, animationName, true); // Loop
-      } else {
-        console.warn(`Animation ${animationName} not found in Spine model`);
-        // Fallback to first available animation
-        const animations = spineRef.current.spineData.animations;
-        if (animations.length > 0) {
-          spineRef.current.state.setAnimation(0, animations[0].name, true);
-        }
-      }
-    } catch (e) {
-      console.warn(`Failed to play animation ${animationName}:`, e);
-    }
-  };
+  }, [mood, playMoodAnimation]);
 
   return (
     <div className={`relative ${className}`}>
-        {loading && (
-            <div className="absolute inset-0 flex items-center justify-center text-white/50 text-sm">
-                Loading Spine Model...
-            </div>
-        )}
-        {error && (
-             <div className="absolute inset-0 flex items-center justify-center text-red-400/80 text-xs text-center p-2">
-                {error}
-            </div>
-        )}
-        <canvas ref={canvasRef} className="w-full h-full object-contain" />
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center text-white/50 text-sm">
+          Loading Spine Model...
+        </div>
+      )}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center text-red-400/80 text-xs text-center p-2">
+          {error}
+        </div>
+      )}
+      <canvas ref={canvasRef} className="w-full h-full object-contain" />
     </div>
   );
 };

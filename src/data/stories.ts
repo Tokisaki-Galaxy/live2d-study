@@ -1,9 +1,9 @@
-import type { StoryChapter } from '@/types';
+import type { StoryChapter } from "@/types";
 
 export const defaultStories: StoryChapter[] = [
   {
-    id: 'chapter-1',
-    title: 'The Beginning',
+    id: "chapter-1",
+    title: "The Beginning",
     content: `In a quiet corner of the city, where the hustle of daily life seemed to fade into a gentle hum, there existed a small cafe that few knew about. It wasn't on any map, and you wouldn't find it through a GPS search. But those who needed it most always seemed to stumble upon its weathered wooden door.
 
 The cafe was called "Moments," and it was run by an elderly woman named Elara. She had kind eyes that seemed to hold centuries of stories, and her smile could make even the weariest traveler feel at home.
@@ -27,8 +27,8 @@ And so began Kai's journey in the cafe that existed between moments, where the c
     unlockAt: 0,
   },
   {
-    id: 'chapter-2',
-    title: 'The First Session',
+    id: "chapter-2",
+    title: "The First Session",
     content: `The morning after Kai's first visit to Moments, they woke up with a strange sense of purpose. The cafe's warmth seemed to have followed them home, lingering like the scent of cinnamon and old books.
 
 They returned that afternoon, finding the door unlocked as if waiting just for them. Elara was behind the counter, arranging fresh flowers in a crystal vase.
@@ -70,8 +70,8 @@ And in this little cafe between moments, those conditions seemed to exist in abu
     unlockAt: 1,
   },
   {
-    id: 'chapter-3',
-    title: 'The Music of Focus',
+    id: "chapter-3",
+    title: "The Music of Focus",
     content: `Days turned into weeks, and Kai found themselves returning to Moments with increasing regularity. The manuscript that had seemed impossible was now taking shape, chapter by chapter, session by session.
 
 But today, something was different. Kai sat at their usual table, timer set, laptop open, but the words wouldn't come. The cafe was quiet—too quiet. Every small sound seemed amplified: the creak of a chair, the distant traffic, the ticking of the clock.
@@ -111,8 +111,8 @@ But as Kai walked out into the evening, they knew it was more than just a space.
     unlockAt: 3,
   },
   {
-    id: 'chapter-4',
-    title: 'The Companion',
+    id: "chapter-4",
+    title: "The Companion",
     content: `It was during Kai's fourth week at Moments that they first noticed the cat.
 
 A small, fluffy creature with fur the color of midnight and eyes like amber moons, it had apparently been living in the cafe all along. How Kai had missed it until now was a mystery.
@@ -160,8 +160,8 @@ It was, Kai decided, the cat equivalent of "you're welcome."`,
     unlockAt: 5,
   },
   {
-    id: 'chapter-5',
-    title: 'The Rhythm of Rest',
+    id: "chapter-5",
+    title: "The Rhythm of Rest",
     content: `Kai had been coming to Moments for nearly two months when they hit their first wall.
 
 It wasn't a lack of ideas—those were flowing freely now. It wasn't a lack of time—they had made the cafe visits a non-negotiable part of their schedule. It was something deeper, something that no amount of pomodoro sessions could fix.
@@ -235,8 +235,8 @@ The rhythm of rest, Kai was learning, was just as important as the rhythm of wor
     unlockAt: 8,
   },
   {
-    id: 'chapter-6',
-    title: 'The Journey Continues',
+    id: "chapter-6",
+    title: "The Journey Continues",
     content: `The day Kai finished their manuscript dawned gray and rainy—the perfect weather for a visit to Moments.
 
 They pushed open the familiar door, breathing in the scent of coffee and old books and possibility. Elara looked up from her reading, and her smile suggested she already knew.
@@ -307,8 +307,10 @@ The end... and the beginning.`,
   },
 ];
 
-export const getUnlockedStories = (sessionsCompleted: number): typeof defaultStories => {
-  return defaultStories.map(story => ({
+export const getUnlockedStories = (
+  sessionsCompleted: number,
+): typeof defaultStories => {
+  return defaultStories.map((story) => ({
     ...story,
     unlocked: sessionsCompleted >= story.unlockAt,
   }));

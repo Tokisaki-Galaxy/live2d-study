@@ -7,7 +7,7 @@ export interface Task {
 }
 
 // Timer types
-export type TimerMode = 'work' | 'shortBreak' | 'longBreak';
+export type TimerMode = "work" | "shortBreak" | "longBreak";
 
 export interface TimerState {
   mode: TimerMode;
@@ -36,7 +36,7 @@ export interface MusicState {
 }
 
 // Scene types
-export type SceneType = 'cafe' | 'rain' | 'sunset' | 'night' | 'forest';
+export type SceneType = "cafe" | "rain" | "sunset" | "night" | "forest";
 
 export interface Scene {
   id: SceneType;
@@ -47,22 +47,22 @@ export interface Scene {
 }
 
 // Character types
-export type CharacterMood = 'happy' | 'focus' | 'sleep' | 'encourage';
+export type CharacterMood = "happy" | "focus" | "sleep" | "encourage";
 
-export type CharacterType = 'svg' | 'live2d' | 'spine';
+export type CharacterType = "svg" | "live2d" | "spine";
 
 export interface CharacterConfig {
   type: CharacterType;
   modelUrl?: string; // For URL import
-  modelData?: string;  // For generic file content (Blob URL of the zip)
-  modelSourceType?: 'url' | 'zip';
+  modelData?: string; // For generic file content (Blob URL of the zip)
+  modelSourceType?: "url" | "zip";
   scale: number;
   position: { x: number; y: number };
   motionMapping: {
-    idle: string;   // Maps to 'happy' / regular state
-    focus: string;  // Maps to 'focus'
-    sleep: string;  // Maps to 'sleep'
-    tap: string;    // Maps to 'encourage' / interaction
+    idle: string; // Maps to 'happy' / regular state
+    focus: string; // Maps to 'focus'
+    sleep: string; // Maps to 'sleep'
+    tap: string; // Maps to 'encourage' / interaction
   };
 }
 
@@ -113,7 +113,7 @@ export interface AppSettings {
 }
 
 // Timer Events
-export type TimerEvent = 'start' | 'complete' | 'warning';
+export type TimerEvent = "start" | "complete" | "warning";
 
 export interface TimerEventCallbacks {
   onTimerStart?: () => void;

@@ -1,38 +1,51 @@
-import { useState, useCallback, lazy, Suspense } from 'react';
-import { 
-  ListTodo, 
-  Music, 
-  BookOpen, 
-  Settings, 
+import { useState, useCallback, lazy, Suspense } from "react";
+import {
+  ListTodo,
+  Music,
+  BookOpen,
+  Settings,
   Image,
   Menu,
   X,
-  Volume2
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+  Volume2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-import { Timer } from '@/components/Timer';
-import { TaskList } from '@/components/TaskList';
-import { MusicPlayer } from '@/components/MusicPlayer';
-import { Character } from '@/components/Character';
-import { StoryReader } from '@/components/StoryReader';
-import { SceneSelector } from '@/components/SceneSelector';
-import { Settings as SettingsPanel } from '@/components/Settings';
-import { VoiceSettings } from '@/components/VoiceSettings';
+import { Timer } from "@/components/Timer";
+import { TaskList } from "@/components/TaskList";
+import { MusicPlayer } from "@/components/MusicPlayer";
+import { Character } from "@/components/Character";
+import { StoryReader } from "@/components/StoryReader";
+import { SceneSelector } from "@/components/SceneSelector";
+import { Settings as SettingsPanel } from "@/components/Settings";
+import { VoiceSettings } from "@/components/VoiceSettings";
 
 // Lazy load Live2DContainer and SpineContainer to avoid loading large libraries unless needed
-const Live2DContainer = lazy(() => import('@/components/Live2DContainer').then(module => ({ default: module.Live2DContainer })));
-const SpineContainer = lazy(() => import('@/components/SpineContainer').then(module => ({ default: module.SpineContainer })));
+const Live2DContainer = lazy(() =>
+  import("@/components/Live2DContainer").then((module) => ({
+    default: module.Live2DContainer,
+  })),
+);
+const SpineContainer = lazy(() =>
+  import("@/components/SpineContainer").then((module) => ({
+    default: module.SpineContainer,
+  })),
+);
 
-import { useTimer } from '@/hooks/useTimer';
-import { useTasks } from '@/hooks/useTasks';
-import { useMusic } from '@/hooks/useMusic';
-import { useCharacter } from '@/hooks/useCharacter';
-import { getUnlockedStories } from '@/data/stories';
-import { scenes } from '@/data/scenes';
+import { useTimer } from "@/hooks/useTimer";
+import { useTasks } from "@/hooks/useTasks";
+import { useMusic } from "@/hooks/useMusic";
+import { useCharacter } from "@/hooks/useCharacter";
+import { getUnlockedStories } from "@/data/stories";
+import { scenes } from "@/data/scenes";
 
-import type { TimerSettings, SceneType, TimerMode, CharacterConfig } from '@/types';
+import type {
+  TimerSettings,
+  SceneType,
+  TimerMode,
+  CharacterConfig,
+} from "@/types";
 
 const defaultTimerSettings: TimerSettings = {
   workDuration: 25 * 60,
@@ -45,44 +58,58 @@ const defaultTimerSettings: TimerSettings = {
 
 function App() {
   // State
-  const [currentScene, setCurrentScene] = useState<SceneType>('cafe');
+  const [currentScene, setCurrentScene] = useState<SceneType>("cafe");
   const [showTasks, setShowTasks] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [showSceneSelector, setShowSceneSelector] = useState(false);
-  const [timerSettings, setTimerSettings] = useState<TimerSettings>(defaultTimerSettings);
+  const [timerSettings, setTimerSettings] =
+    useState<TimerSettings>(defaultTimerSettings);
 
   // Hooks
   const timer = useTimer(timerSettings);
   const tasks = useTasks();
   const music = useMusic();
-  const character = useCharacter(timer.mode, timer.isRunning, timer.totalSessions);
+  const character = useCharacter(
+    timer.mode,
+    timer.isRunning,
+    timer.totalSessions,
+  );
 
   // Get unlocked stories based on completed sessions
   const stories = getUnlockedStories(timer.totalSessions);
 
   // Get current scene gradient
-  const sceneGradient = scenes.find(s => s.id === currentScene)?.gradient || 'scene-cafe';
+  const sceneGradient =
+    scenes.find((s) => s.id === currentScene)?.gradient || "scene-cafe";
 
   // Handle timer mode change
-  const handleModeChange = useCallback((mode: TimerMode) => {
-    timer.switchMode(mode);
-  }, [timer]);
+  const handleModeChange = useCallback(
+    (mode: TimerMode) => {
+      timer.switchMode(mode);
+    },
+    [timer],
+  );
 
   // Update timer settings
   const handleUpdateSettings = useCallback((newSettings: TimerSettings) => {
     setTimerSettings(newSettings);
   }, []);
-  
+
   // Update character settings
-  const handleUpdateCharacterConfig = useCallback((newConfig: CharacterConfig) => {
-    character.updateConfig(newConfig);
-  }, [character]);
+  const handleUpdateCharacterConfig = useCallback(
+    (newConfig: CharacterConfig) => {
+      character.updateConfig(newConfig);
+    },
+    [character],
+  );
 
   // Toggle panels
-  const togglePanel = (panel: 'tasks' | 'music' | 'story' | 'settings' | 'voice' | 'scene') => {
+  const togglePanel = (
+    panel: "tasks" | "music" | "story" | "settings" | "voice" | "scene",
+  ) => {
     // Close all other panels
     setShowTasks(false);
     setShowMusic(false);
@@ -93,22 +120,22 @@ function App() {
 
     // Open selected panel
     switch (panel) {
-      case 'tasks':
+      case "tasks":
         setShowTasks(true);
         break;
-      case 'music':
+      case "music":
         setShowMusic(true);
         break;
-      case 'story':
+      case "story":
         setShowStory(true);
         break;
-      case 'settings':
+      case "settings":
         setShowSettings(true);
         break;
-      case 'voice':
+      case "voice":
         setShowVoiceSettings(true);
         break;
-      case 'scene':
+      case "scene":
         setShowSceneSelector(true);
         break;
     }
@@ -117,7 +144,9 @@ function App() {
   const isFocusMode = timer.isRunning;
 
   return (
-    <div className={`h-screen w-screen overflow-hidden flex flex-col transition-all duration-1000 ${sceneGradient}`}>
+    <div
+      className={`h-screen w-screen overflow-hidden flex flex-col transition-all duration-1000 ${sceneGradient}`}
+    >
       {/* Background overlay */}
       <div className="fixed inset-0 bg-black/20 pointer-events-none" />
 
@@ -139,7 +168,7 @@ function App() {
           <nav className="hidden md:flex items-center gap-2">
             <Button
               variant="ghost"
-              onClick={() => togglePanel('scene')}
+              onClick={() => togglePanel("scene")}
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               <Image className="w-4 h-4 mr-2" />
@@ -147,7 +176,7 @@ function App() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => togglePanel('tasks')}
+              onClick={() => togglePanel("tasks")}
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               <ListTodo className="w-4 h-4 mr-2" />
@@ -155,7 +184,7 @@ function App() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => togglePanel('music')}
+              onClick={() => togglePanel("music")}
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               <Music className="w-4 h-4 mr-2" />
@@ -163,7 +192,7 @@ function App() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => togglePanel('story')}
+              onClick={() => togglePanel("story")}
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               <BookOpen className="w-4 h-4 mr-2" />
@@ -171,7 +200,7 @@ function App() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => togglePanel('settings')}
+              onClick={() => togglePanel("settings")}
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               <Settings className="w-4 h-4 mr-2" />
@@ -179,7 +208,7 @@ function App() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => togglePanel('voice')}
+              onClick={() => togglePanel("voice")}
               className="text-white/70 hover:text-white hover:bg-white/10"
             >
               <Volume2 className="w-4 h-4 mr-2" />
@@ -198,7 +227,7 @@ function App() {
               <div className="flex flex-col gap-2 mt-8 px-6">
                 <Button
                   variant="ghost"
-                  onClick={() => togglePanel('scene')}
+                  onClick={() => togglePanel("scene")}
                   className="justify-start text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <Image className="w-4 h-4 mr-3" />
@@ -206,7 +235,7 @@ function App() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => togglePanel('tasks')}
+                  onClick={() => togglePanel("tasks")}
                   className="justify-start text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <ListTodo className="w-4 h-4 mr-3" />
@@ -214,7 +243,7 @@ function App() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => togglePanel('music')}
+                  onClick={() => togglePanel("music")}
                   className="justify-start text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <Music className="w-4 h-4 mr-3" />
@@ -222,7 +251,7 @@ function App() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => togglePanel('story')}
+                  onClick={() => togglePanel("story")}
                   className="justify-start text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <BookOpen className="w-4 h-4 mr-3" />
@@ -230,7 +259,7 @@ function App() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => togglePanel('settings')}
+                  onClick={() => togglePanel("settings")}
                   className="justify-start text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <Settings className="w-4 h-4 mr-3" />
@@ -238,7 +267,7 @@ function App() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => togglePanel('voice')}
+                  onClick={() => togglePanel("voice")}
                   className="justify-start text-white/70 hover:text-white hover:bg-white/10"
                 >
                   <Volume2 className="w-4 h-4 mr-3" />
@@ -253,20 +282,22 @@ function App() {
         <main className="flex-1 flex items-center justify-center p-4 sm:p-8 min-h-0">
           <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-8 h-full max-h-[650px] transition-all duration-500">
             {/* Left panel - Character & Timer */}
-            <div className={`glass rounded-3xl p-0 flex flex-col lg:flex-row overflow-hidden relative transition-all duration-500 ${
-              isFocusMode ? 'lg:col-span-3' : 'lg:col-span-2'
-            }`}>
-              
+            <div
+              className={`glass rounded-3xl p-0 flex flex-col lg:flex-row overflow-hidden relative transition-all duration-500 ${
+                isFocusMode ? "lg:col-span-3" : "lg:col-span-2"
+              }`}
+            >
               {/* Character Section - Left side on desktop */}
               <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative p-8">
-                 <div className="flex items-center justify-center w-full h-full relative">
-                    {/* Speech Bubble for Live2D and Spine models */}
-                    {(character.config.type === 'live2d' || character.config.type === 'spine') && character.showBubble && character.character.message && (
-                      <div 
-                        className="absolute top-4 left-1/2 -translate-x-1/2 w-48 lg:w-64 animate-fade-in z-50 pointer-events-none"
-                      >
-                        <div 
-                          className="glass rounded-2xl p-3 lg:p-4 relative pointer-events-auto cursor-pointer" 
+                <div className="flex items-center justify-center w-full h-full relative">
+                  {/* Speech Bubble for Live2D and Spine models */}
+                  {(character.config.type === "live2d" ||
+                    character.config.type === "spine") &&
+                    character.showBubble &&
+                    character.character.message && (
+                      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-48 lg:w-64 animate-fade-in z-50 pointer-events-none">
+                        <div
+                          className="glass rounded-2xl p-3 lg:p-4 relative pointer-events-auto cursor-pointer"
                           onClick={() => character.hideBubble()}
                         >
                           <p className="text-white text-xs lg:text-sm text-center leading-relaxed">
@@ -277,71 +308,83 @@ function App() {
                         </div>
                       </div>
                     )}
-                    {character.config.type === 'live2d' ? (
-                        <Suspense fallback={
-                          <div className="flex items-center justify-center">
-                            <div className="text-white/50">Loading Live2D...</div>
-                          </div>
-                        }>
-                          <Live2DContainer 
-                              config={character.config}
-                              mood={character.character.mood}
-                              className="w-full h-full"
-                          />
-                        </Suspense>
-                    ) : character.config.type === 'spine' ? (
-                        <Suspense fallback={
-                          <div className="flex items-center justify-center">
-                            <div className="text-white/50">Loading Spine...</div>
-                          </div>
-                        }>
-                          <SpineContainer 
-                              config={character.config}
-                              mood={character.character.mood}
-                              className="w-full h-full"
-                          />
-                        </Suspense>
-                    ) : (
-                        <Character
-                          mood={character.character.mood}
-                          message={character.character.message}
-                          showBubble={character.showBubble}
-                          onClick={() => character.showMessage('Keep going! You\'re doing great! ✨')}
-                          className="w-48 h-48 lg:w-80 lg:h-80"
-                        />
-                    )}
-                 </div>
+                  {character.config.type === "live2d" ? (
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center">
+                          <div className="text-white/50">Loading Live2D...</div>
+                        </div>
+                      }
+                    >
+                      <Live2DContainer
+                        config={character.config}
+                        mood={character.character.mood}
+                        className="w-full h-full"
+                      />
+                    </Suspense>
+                  ) : character.config.type === "spine" ? (
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center">
+                          <div className="text-white/50">Loading Spine...</div>
+                        </div>
+                      }
+                    >
+                      <SpineContainer
+                        config={character.config}
+                        mood={character.character.mood}
+                        className="w-full h-full"
+                      />
+                    </Suspense>
+                  ) : (
+                    <Character
+                      mood={character.character.mood}
+                      message={character.character.message}
+                      showBubble={character.showBubble}
+                      onClick={() =>
+                        character.showMessage(
+                          "Keep going! You're doing great! ✨",
+                        )
+                      }
+                      className="w-48 h-48 lg:w-80 lg:h-80"
+                    />
+                  )}
+                </div>
               </div>
 
               {/* Timer Section - Right side on desktop */}
               <div className="flex-1 flex items-center justify-center p-8 transition-all duration-500">
-                  <div className={`transform transition-all duration-500 ${isFocusMode ? 'scale-105 lg:scale-110' : 'scale-95 lg:scale-100'}`}>
-                    <Timer
-                      mode={timer.mode}
-                      formattedTime={timer.formattedTime}
-                      timeRemaining={timer.timeRemaining}
-                      totalTime={
-                        timer.mode === 'work'
-                          ? timerSettings.workDuration
-                          : timer.mode === 'shortBreak'
+                <div
+                  className={`transform transition-all duration-500 ${isFocusMode ? "scale-105 lg:scale-110" : "scale-95 lg:scale-100"}`}
+                >
+                  <Timer
+                    mode={timer.mode}
+                    formattedTime={timer.formattedTime}
+                    timeRemaining={timer.timeRemaining}
+                    totalTime={
+                      timer.mode === "work"
+                        ? timerSettings.workDuration
+                        : timer.mode === "shortBreak"
                           ? timerSettings.shortBreakDuration
                           : timerSettings.longBreakDuration
-                      }
-                      isRunning={timer.isRunning}
-                      currentSession={timer.currentSession}
-                      totalSessions={timer.totalSessions}
-                      onStart={timer.start}
-                      onPause={timer.pause}
-                      onReset={timer.reset}
-                      onSkip={timer.skip}
-                      onModeChange={handleModeChange}
-                    />
-                  </div>
+                    }
+                    isRunning={timer.isRunning}
+                    currentSession={timer.currentSession}
+                    totalSessions={timer.totalSessions}
+                    onStart={timer.start}
+                    onPause={timer.pause}
+                    onReset={timer.reset}
+                    onSkip={timer.skip}
+                    onModeChange={handleModeChange}
+                  />
+                </div>
               </div>
             </div>
 
             {/* Right panel - Side panels */}
-            <div className={`transition-all duration-500 overflow-hidden ${isFocusMode ? 'w-0 opacity-0 hidden' : 'w-full opacity-100 hidden lg:block h-full'}`}>
+            <div
+              className={`transition-all duration-500 overflow-hidden ${isFocusMode ? "w-0 opacity-0 hidden" : "w-full opacity-100 hidden lg:block h-full"}`}
+            >
               <div className="glass rounded-3xl p-6 h-full">
                 {showTasks && (
                   <div className="h-full animate-slide-in">
@@ -410,7 +453,9 @@ function App() {
                   <div className="h-full animate-slide-in">
                     <div className="flex flex-col h-full">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-white font-semibold">Select Scene</h3>
+                        <h3 className="text-white font-semibold">
+                          Select Scene
+                        </h3>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -429,56 +474,75 @@ function App() {
                 )}
 
                 {/* Default view - Quick stats */}
-                {!showTasks && !showMusic && !showStory && !showSettings && !showVoiceSettings && !showSceneSelector && (
-                  <div className="h-full flex flex-col items-center justify-center text-center">
-                    <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-                      <span className="text-4xl">✨</span>
+                {!showTasks &&
+                  !showMusic &&
+                  !showStory &&
+                  !showSettings &&
+                  !showVoiceSettings &&
+                  !showSceneSelector && (
+                    <div className="h-full flex flex-col items-center justify-center text-center">
+                      <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+                        <span className="text-4xl">✨</span>
+                      </div>
+                      <h3 className="text-white font-semibold mb-2">
+                        Welcome Back!
+                      </h3>
+                      <p className="text-white/50 text-sm mb-6">
+                        Select a feature from the menu to get started
+                      </p>
+
+                      <div className="grid grid-cols-2 gap-3 w-full">
+                        <button
+                          onClick={() => togglePanel("tasks")}
+                          className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
+                        >
+                          <ListTodo className="w-5 h-5 text-white/60 mb-2" />
+                          <p className="text-white text-sm font-medium">
+                            Tasks
+                          </p>
+                          <p className="text-white/40 text-xs">
+                            {tasks.pendingCount} pending
+                          </p>
+                        </button>
+                        <button
+                          onClick={() => togglePanel("music")}
+                          className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
+                        >
+                          <Music className="w-5 h-5 text-white/60 mb-2" />
+                          <p className="text-white text-sm font-medium">
+                            Music
+                          </p>
+                          <p className="text-white/40 text-xs">
+                            {music.isPlaying ? "Playing" : "Paused"}
+                          </p>
+                        </button>
+                        <button
+                          onClick={() => togglePanel("story")}
+                          className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
+                        >
+                          <BookOpen className="w-5 h-5 text-white/60 mb-2" />
+                          <p className="text-white text-sm font-medium">
+                            Story
+                          </p>
+                          <p className="text-white/40 text-xs">
+                            {stories.filter((s) => s.unlocked).length} chapters
+                          </p>
+                        </button>
+                        <button
+                          onClick={() => togglePanel("settings")}
+                          className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
+                        >
+                          <Settings className="w-5 h-5 text-white/60 mb-2" />
+                          <p className="text-white text-sm font-medium">
+                            Settings
+                          </p>
+                          <p className="text-white/40 text-xs">
+                            Customize timer
+                          </p>
+                        </button>
+                      </div>
                     </div>
-                    <h3 className="text-white font-semibold mb-2">Welcome Back!</h3>
-                    <p className="text-white/50 text-sm mb-6">
-                      Select a feature from the menu to get started
-                    </p>
-                    
-                    <div className="grid grid-cols-2 gap-3 w-full">
-                      <button
-                        onClick={() => togglePanel('tasks')}
-                        className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
-                      >
-                        <ListTodo className="w-5 h-5 text-white/60 mb-2" />
-                        <p className="text-white text-sm font-medium">Tasks</p>
-                        <p className="text-white/40 text-xs">{tasks.pendingCount} pending</p>
-                      </button>
-                      <button
-                        onClick={() => togglePanel('music')}
-                        className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
-                      >
-                        <Music className="w-5 h-5 text-white/60 mb-2" />
-                        <p className="text-white text-sm font-medium">Music</p>
-                        <p className="text-white/40 text-xs">
-                          {music.isPlaying ? 'Playing' : 'Paused'}
-                        </p>
-                      </button>
-                      <button
-                        onClick={() => togglePanel('story')}
-                        className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
-                      >
-                        <BookOpen className="w-5 h-5 text-white/60 mb-2" />
-                        <p className="text-white text-sm font-medium">Story</p>
-                        <p className="text-white/40 text-xs">
-                          {stories.filter(s => s.unlocked).length} chapters
-                        </p>
-                      </button>
-                      <button
-                        onClick={() => togglePanel('settings')}
-                        className="p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left"
-                      >
-                        <Settings className="w-5 h-5 text-white/60 mb-2" />
-                        <p className="text-white text-sm font-medium">Settings</p>
-                        <p className="text-white/40 text-xs">Customize timer</p>
-                      </button>
-                    </div>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
           </div>
@@ -487,7 +551,10 @@ function App() {
         {/* Mobile panels */}
         <div className="lg:hidden">
           <Sheet open={showTasks} onOpenChange={setShowTasks}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+            <SheetContent
+              side="bottom"
+              className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden"
+            >
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
               <div className="h-full p-6 pt-10">
                 <TaskList
@@ -504,7 +571,10 @@ function App() {
           </Sheet>
 
           <Sheet open={showMusic} onOpenChange={setShowMusic}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+            <SheetContent
+              side="bottom"
+              className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden"
+            >
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
               <div className="h-full p-6 pt-10">
                 <MusicPlayer
@@ -527,7 +597,10 @@ function App() {
           </Sheet>
 
           <Sheet open={showStory} onOpenChange={setShowStory}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+            <SheetContent
+              side="bottom"
+              className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden"
+            >
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
               <div className="h-full p-6 pt-10">
                 <StoryReader
@@ -539,7 +612,10 @@ function App() {
           </Sheet>
 
           <Sheet open={showSettings} onOpenChange={setShowSettings}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+            <SheetContent
+              side="bottom"
+              className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden"
+            >
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
               <div className="h-full p-6 pt-10">
                 <SettingsPanel
@@ -554,18 +630,22 @@ function App() {
           </Sheet>
 
           <Sheet open={showVoiceSettings} onOpenChange={setShowVoiceSettings}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+            <SheetContent
+              side="bottom"
+              className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden"
+            >
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
               <div className="h-full p-6 pt-10">
-                <VoiceSettings
-                  onClose={() => setShowVoiceSettings(false)}
-                />
+                <VoiceSettings onClose={() => setShowVoiceSettings(false)} />
               </div>
             </SheetContent>
           </Sheet>
 
           <Sheet open={showSceneSelector} onOpenChange={setShowSceneSelector}>
-            <SheetContent side="bottom" className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden">
+            <SheetContent
+              side="bottom"
+              className="glass border-white/10 h-[80vh] rounded-t-[2rem] p-0 overflow-hidden"
+            >
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-white/10" />
               <div className="h-full p-6 pt-10">
                 <div className="flex items-center justify-between mb-4">
@@ -579,7 +659,6 @@ function App() {
             </SheetContent>
           </Sheet>
         </div>
-
       </div>
     </div>
   );

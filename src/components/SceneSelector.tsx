@@ -1,7 +1,7 @@
-import React from 'react';
-import { Check } from 'lucide-react';
-import { scenes } from '@/data/scenes';
-import type { SceneType } from '@/types';
+import React from "react";
+import { Check } from "lucide-react";
+import { scenes } from "@/data/scenes";
+import type { SceneType } from "@/types";
 
 interface SceneSelectorProps {
   currentScene: SceneType;
@@ -20,15 +20,15 @@ export const SceneSelector: React.FC<SceneSelectorProps> = ({
           onClick={() => onSceneChange(scene.id)}
           className={`relative group p-4 rounded-xl transition-all duration-300 ${
             currentScene === scene.id
-              ? 'bg-white/20 ring-2 ring-white/40'
-              : 'bg-white/5 hover:bg-white/10'
+              ? "bg-white/20 ring-2 ring-white/40"
+              : "bg-white/5 hover:bg-white/10"
           }`}
         >
           {/* Scene preview gradient */}
-          <div 
+          <div
             className={`absolute inset-0 rounded-xl opacity-30 ${scene.gradient}`}
           />
-          
+
           {/* Content */}
           <div className="relative z-10 flex flex-col items-center text-center">
             <span className="text-3xl mb-2">{scene.icon}</span>
