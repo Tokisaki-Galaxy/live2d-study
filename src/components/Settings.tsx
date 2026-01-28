@@ -1,18 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { X, Clock, Volume2, Bell, User, Upload, Link as LinkIcon, Move } from 'lucide-react';
+import { X, Clock, Upload, Move } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import type { TimerSettings, CharacterConfig } from '@/types';
 
 interface SettingsProps {

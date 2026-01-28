@@ -33,7 +33,6 @@ export class Live2DLoader {
       
       const zip = await JSZip.loadAsync(zipBlob);
       const files: Record<string, Blob> = {};
-      let modelFile = '';
       
       // 1. Unzip and find entry point
       const filePaths = Object.keys(zip.files);
@@ -87,9 +86,7 @@ export class Live2DLoader {
        const modelJsonContent = await zip.files[modelJsonPath].async('string');
        const modelConfig = JSON.parse(modelJsonContent);
        
-       // Function to replace paths with Blob URLs
-       const pathMap = new Map<string, string>();
-       
+
        const getBlobUrlForPath = async (relativePath: string) => {
          // Resolve relative path against rootDir
          // e.g. rootDir = "Haru/", relativePath = "motions/idle.motion3.json"

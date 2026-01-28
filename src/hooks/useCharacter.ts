@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import type { Character, CharacterMood, TimerMode } from '@/types';
+import type { Character, CharacterMood, TimerMode, CharacterConfig } from '@/types';
 
 interface CharacterMessage {
   mood: CharacterMood;

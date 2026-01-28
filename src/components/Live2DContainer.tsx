@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import { Live2DModel } from 'pixi-live2d-display';
 import { Live2DLoader } from '@/lib/live2d-loader';
-import { CharacterConfig, CharacterMood } from '@/types';
+import type { CharacterConfig, CharacterMood } from '@/types';
 
 // Expose PIXI for the library
 (window as any).PIXI = PIXI;
-Live2DModel.registerTicker(PIXI.Ticker.shared);
+Live2DModel.registerTicker(PIXI.Ticker.shared as any);
 
 interface Live2DContainerProps {
   config: CharacterConfig;
@@ -71,7 +71,7 @@ export const Live2DContainer: React.FC<Live2DContainerProps> = ({
       
       // Clear previous model
       if (modelRef.current) {
-        appRef.current.stage.removeChild(modelRef.current);
+        appRef.current.stage.removeChild(modelRef.current as any);
         modelRef.current.destroy();
         modelRef.current = null;
       }
@@ -97,7 +97,7 @@ export const Live2DContainer: React.FC<Live2DContainerProps> = ({
         }
 
         if (active && model && appRef.current) {
-          appRef.current.stage.addChild(model);
+          appRef.current.stage.addChild(model as any);
           modelRef.current = model;
           
           // Apply transforms
