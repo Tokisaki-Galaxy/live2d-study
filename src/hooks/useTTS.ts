@@ -120,8 +120,21 @@ export function useTTS() {
 
   // Save settings to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem(TTS_STORAGE_KEY, JSON.stringify(settings));
+    try {
+      localStorage.setItem(TTS_STORAGE_KEY, JSON.stringify(settings));
+    } catch {
+      // Ignore storage errors (e.g., private browsing, quota exceeded)
+    }
   }, [settings]);
+
+  // Cleanup speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if (isSupported) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [isSupported]);
 
   // Process queued messages when sound effect finishes
   useEffect(() => {
@@ -200,40 +213,36 @@ export function useTTS() {
   }, []);
 
   /**
-   * Preview the current voice settings with a sample text
+   * Preview the current voice settings with a sample text.
+   * Works even when TTS is disabled.
    */
   const preview = useCallback(
     (text: string = "Hello! This is a preview of the selected voice.") => {
       if (!isSupported) return;
 
-      // Temporarily enable for preview
-      const wasEnabled = settings.enabled;
-      if (!wasEnabled) {
-        // Speak directly without checking enabled state
-        window.speechSynthesis.cancel();
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
 
-        const utterance = new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(text);
 
-        const availableVoices = window.speechSynthesis.getVoices();
-        const selectedVoice = availableVoices.find((v) => v.voiceURI === settings.voiceURI);
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-
-        utterance.rate = settings.rate;
-        utterance.pitch = settings.pitch;
-        utterance.volume = settings.volume;
-
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
-
-        window.speechSynthesis.speak(utterance);
-      } else {
-        speakInternal(text);
+      // Find and set the selected voice
+      const availableVoices = window.speechSynthesis.getVoices();
+      const selectedVoice = availableVoices.find((v) => v.voiceURI === settings.voiceURI);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
       }
+
+      utterance.rate = settings.rate;
+      utterance.pitch = settings.pitch;
+      utterance.volume = settings.volume;
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
+      window.speechSynthesis.speak(utterance);
     },
-    [isSupported, settings, speakInternal],
+    [isSupported, settings],
   );
 
   return {

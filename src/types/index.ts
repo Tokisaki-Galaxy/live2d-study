@@ -125,8 +125,8 @@ export interface TimerEventCallbacks {
 export interface TTSSettings {
   enabled: boolean;
   voiceURI: string; // Selected voice URI
-  rate: number; // Speech rate (0.1 - 10)
-  pitch: number; // Speech pitch (0 - 2)
+  rate: number; // Speech rate (UI range: 0.5 - 2.0, Web Speech API supports 0.1 - 10)
+  pitch: number; // Speech pitch (UI range: 0.5 - 2.0, Web Speech API supports 0 - 2)
   volume: number; // Speech volume (0 - 1)
 }
 

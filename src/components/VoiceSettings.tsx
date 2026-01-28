@@ -240,6 +240,7 @@ export const VoiceSettings: React.FC<VoiceSettingsProps> = ({ onClose }) => {
                     value={previewText}
                     onChange={(e) => setPreviewText(e.target.value)}
                     placeholder="Enter text to preview..."
+                    aria-label="Preview text for TTS"
                     className="w-full h-20 p-2 rounded bg-white/10 border border-white/20 text-white text-sm placeholder:text-white/30 resize-none focus:outline-none focus:border-white/40"
                     disabled={!tts.isSupported}
                   />

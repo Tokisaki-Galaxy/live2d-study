@@ -44,7 +44,7 @@ export const CharacterTTS: React.FC<CharacterTTSProps> = ({
   message,
   showBubble,
 }) => {
-  const tts = useTTSContext();
+  const { settings, speak } = useTTSContext();
   const lastSpokenMessageRef = useRef<string>("");
 
   // Speak message when bubble is shown and message changes
@@ -54,23 +54,23 @@ export const CharacterTTS: React.FC<CharacterTTSProps> = ({
     // 2. The bubble is being shown (new message appeared)
     // 3. The message is different from the last spoken one
     if (
-      tts.settings.enabled &&
+      settings.enabled &&
       showBubble &&
       message &&
       message !== lastSpokenMessageRef.current
     ) {
-      // Remove emojis for cleaner TTS output
+      // Remove emojis for cleaner TTS output (common emoji ranges)
       const cleanMessage = message.replace(
-        /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,
+        /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{231A}-\u{231B}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}\u{25AA}-\u{25AB}\u{25B6}\u{25C0}\u{25FB}-\u{25FE}\u{2614}-\u{2615}\u{2648}-\u{2653}\u{267F}\u{2693}\u{26A1}\u{26AA}-\u{26AB}\u{26BD}-\u{26BE}\u{26C4}-\u{26C5}\u{26CE}\u{26D4}\u{26EA}\u{26F2}-\u{26F3}\u{26F5}\u{26FA}\u{26FD}\u{2702}\u{2705}\u{2708}-\u{270D}\u{270F}]/gu,
         ""
       ).trim();
       
       if (cleanMessage) {
-        tts.speak(cleanMessage);
+        speak(cleanMessage);
         lastSpokenMessageRef.current = message;
       }
     }
-  }, [message, showBubble, tts]);
+  }, [message, showBubble, settings.enabled, speak]);
 
   // Reset last spoken message when bubble hides
   useEffect(() => {
