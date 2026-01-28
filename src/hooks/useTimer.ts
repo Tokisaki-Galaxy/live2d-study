@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { TimerMode, TimerState, TimerSettings } from '@/types';
+import { soundManager } from '@/lib/sounds';
 
 const defaultSettings: TimerSettings = {
   workDuration: 25 * 60,
@@ -21,6 +22,7 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const warningPlayedRef = useRef<boolean>(false); // Track if 5-min warning was played
 
   // Initialize audio
   useEffect(() => {
@@ -45,27 +47,6 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
     }
   }, [settings]);
 
-  const playNotificationSound = useCallback(() => {
-    if (audioRef.current) {
-      // Create a simple beep using Web Audio API
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = 800;
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-    }
-  }, []);
-
   const switchMode = useCallback((newMode: TimerMode) => {
     setState(prev => ({
       ...prev,
@@ -77,6 +58,8 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
 
   const start = useCallback(() => {
     setState(prev => ({ ...prev, isRunning: true }));
+    soundManager.play('timer-start'); // Play start sound
+    warningPlayedRef.current = false; // Reset warning flag when starting
   }, []);
 
   const pause = useCallback(() => {
@@ -89,6 +72,7 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
       timeRemaining: getDurationForMode(prev.mode),
       isRunning: false,
     }));
+    warningPlayedRef.current = false; // Reset warning flag
   }, [getDurationForMode]);
 
   const skip = useCallback(() => {
@@ -96,6 +80,8 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
       ? (state.currentSession % settings.sessionsBeforeLongBreak === 0 ? 'longBreak' : 'shortBreak')
       : 'work';
     
+    warningPlayedRef.current = false; // Reset warning flag
+
     if (state.mode === 'work') {
       setState(prev => ({
         ...prev,
@@ -120,9 +106,16 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
     if (state.isRunning) {
       intervalRef.current = setInterval(() => {
         setState(prev => {
+          // Check for 5-minute warning (300 seconds)
+          if (prev.timeRemaining === 300 && !warningPlayedRef.current) {
+            soundManager.play('timer-warning');
+            warningPlayedRef.current = true;
+          }
+
           if (prev.timeRemaining <= 1) {
-            // Timer completed
-            playNotificationSound();
+            // Timer completed - play completion sound
+            soundManager.play('timer-end');
+            warningPlayedRef.current = false; // Reset for next session
             
             if (prev.mode === 'work') {
               const nextMode = prev.currentSession % settings.sessionsBeforeLongBreak === 0 
@@ -166,7 +159,7 @@ export function useTimer(settings: TimerSettings = defaultSettings) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [state.isRunning, settings, getDurationForMode, playNotificationSound]);
+  }, [state.isRunning, settings, getDurationForMode]);
 
   const formatTime = useCallback((seconds: number): string => {
     const mins = Math.floor(seconds / 60);
