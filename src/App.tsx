@@ -20,6 +20,7 @@ import { StoryReader } from "@/components/StoryReader";
 import { SceneSelector } from "@/components/SceneSelector";
 import { Settings as SettingsPanel } from "@/components/Settings";
 import { VoiceSettings } from "@/components/VoiceSettings";
+import { CharacterTTS } from "@/contexts/TTSContext";
 
 // Lazy load Live2DContainer and SpineContainer to avoid loading large libraries unless needed
 const Live2DContainer = lazy(() =>
@@ -289,6 +290,11 @@ function App() {
             >
               {/* Character Section - Left side on desktop */}
               <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative p-8">
+                {/* TTS Component - speaks character messages */}
+                <CharacterTTS
+                  message={character.character.message}
+                  showBubble={character.showBubble}
+                />
                 <div className="flex items-center justify-center w-full h-full relative">
                   {/* Speech Bubble for Live2D and Spine models */}
                   {(character.config.type === "live2d" ||

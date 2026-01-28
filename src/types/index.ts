@@ -120,3 +120,19 @@ export interface TimerEventCallbacks {
   onTimerComplete?: () => void;
   onTimerWarning?: () => void;
 }
+
+// TTS (Text-to-Speech) types
+export interface TTSSettings {
+  enabled: boolean;
+  voiceURI: string; // Selected voice URI
+  rate: number; // Speech rate (UI range: 0.5 - 2.0, Web Speech API supports 0.1 - 10)
+  pitch: number; // Speech pitch (UI range: 0.5 - 2.0, Web Speech API supports 0 - 2)
+  volume: number; // Speech volume (0 - 1)
+}
+
+export interface TTSVoice {
+  voiceURI: string;
+  name: string;
+  lang: string;
+  localService: boolean;
+}
