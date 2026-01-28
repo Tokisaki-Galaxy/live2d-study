@@ -75,7 +75,7 @@ export function useCharacter(timerMode: TimerMode, isRunning: boolean, sessionsC
   const [config, setConfig] = useState<CharacterConfig>(() => {
       try {
         const saved = localStorage.getItem('character-config');
-        return saved ? JSON.parse(saved) : defaultCharacterConfig;
+        return saved ? { ...defaultCharacterConfig, ...JSON.parse(saved) } : defaultCharacterConfig;
       } catch {
         return defaultCharacterConfig;
       }

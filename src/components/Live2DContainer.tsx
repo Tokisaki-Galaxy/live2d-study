@@ -102,7 +102,7 @@ export const Live2DContainer: React.FC<Live2DContainerProps> = ({
           
           // Apply transforms
           // Center the model roughly
-          model.position.set(400, 400); // Center of 800x800 canvas
+          model.position.set(400 + (config.position?.x || 0), 400 + (config.position?.y || 0)); 
           model.anchor.set(0.5, 0.5);
           model.scale.set(config.scale);
           
@@ -122,7 +122,15 @@ export const Live2DContainer: React.FC<Live2DContainerProps> = ({
     return () => {
       active = false;
     };
-  }, [config.modelUrl, config.modelData, config.modelSourceType, config.scale]); 
+  }, [config.modelUrl, config.modelData, config.modelSourceType]); // Removed scale/position from deps to prevent reload
+
+  // Apply transforms when config changes
+  useEffect(() => {
+      if (modelRef.current) {
+          modelRef.current.scale.set(config.scale);
+          modelRef.current.position.set(400 + (config.position?.x || 0), 400 + (config.position?.y || 0));
+      }
+  }, [config.scale, config.position?.x, config.position?.y]);
 
   // Handle Mood Changes -> Play Animation
   useEffect(() => {
