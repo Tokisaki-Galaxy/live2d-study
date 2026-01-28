@@ -139,8 +139,6 @@ export const Settings: React.FC<SettingsProps> = ({
             min={5}
             max={45}
             step={5}
-            max={45}
-            step={5}
           />
         </div>
 
