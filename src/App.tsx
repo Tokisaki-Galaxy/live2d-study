@@ -21,8 +21,9 @@ import { SceneSelector } from '@/components/SceneSelector';
 import { Settings as SettingsPanel } from '@/components/Settings';
 import { VoiceSettings } from '@/components/VoiceSettings';
 
-// Lazy load Live2DContainer to avoid loading pixi-live2d-display unless needed
+// Lazy load Live2DContainer and SpineContainer to avoid loading large libraries unless needed
 const Live2DContainer = lazy(() => import('@/components/Live2DContainer').then(module => ({ default: module.Live2DContainer })));
+const SpineContainer = lazy(() => import('@/components/SpineContainer').then(module => ({ default: module.SpineContainer })));
 
 import { useTimer } from '@/hooks/useTimer';
 import { useTasks } from '@/hooks/useTasks';
@@ -271,6 +272,18 @@ function App() {
                               className="w-full h-full"
                           />
                         </Suspense>
+                    ) : character.config.type === 'spine' ? (
+                        <Suspense fallback={
+                          <div className="flex items-center justify-center">
+                            <div className="text-white/50">Loading Spine...</div>
+                          </div>
+                        }>
+                          <SpineContainer 
+                              config={character.config}
+                              mood={character.character.mood}
+                              className="w-full h-full"
+                          />
+                        </Suspense>
                     ) : (
                         <Character
                           mood={character.character.mood}
@@ -341,6 +354,7 @@ function App() {
                       onSelectTrack={music.selectTrack}
                       onVolumeChange={music.setVolume}
                       onAddTrack={music.addCustomTrack}
+                      onAddFolder={music.addFolder}
                       onRemoveTrack={music.removeTrack}
                     />
                   </div>
@@ -488,6 +502,7 @@ function App() {
                   onSelectTrack={music.selectTrack}
                   onVolumeChange={music.setVolume}
                   onAddTrack={music.addCustomTrack}
+                  onAddFolder={music.addFolder}
                   onRemoveTrack={music.removeTrack}
                 />
               </div>
