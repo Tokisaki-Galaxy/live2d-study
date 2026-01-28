@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import type { CharacterMood } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface CharacterProps {
   mood: CharacterMood;
   message: string;
   showBubble: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 // SVG Character - Momo the Cat
@@ -157,6 +159,7 @@ export const Character: React.FC<CharacterProps> = ({
   message,
   showBubble,
   onClick,
+  className,
 }) => {
   const [bubbleVisible, setBubbleVisible] = useState(showBubble);
 
@@ -165,15 +168,14 @@ export const Character: React.FC<CharacterProps> = ({
   }, [showBubble]);
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="relative flex flex-col items-center justify-center">
       {/* Speech Bubble */}
       {bubbleVisible && message && (
         <div 
-          className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 animate-fade-in"
-          onClick={() => setBubbleVisible(false)}
+          className="absolute -top-16 lg:-top-24 left-1/2 -translate-x-1/2 w-48 lg:w-64 animate-fade-in z-50 pointer-events-none"
         >
-          <div className="glass rounded-2xl p-4 relative">
-            <p className="text-white text-sm text-center leading-relaxed">
+          <div className="glass rounded-2xl p-3 lg:p-4 relative pointer-events-auto cursor-pointer" onClick={() => setBubbleVisible(false)}>
+            <p className="text-white text-xs lg:text-sm text-center leading-relaxed">
               {message}
             </p>
             {/* Triangle pointer */}
@@ -185,17 +187,19 @@ export const Character: React.FC<CharacterProps> = ({
       {/* Character */}
       <div 
         onClick={onClick}
-        className={`w-32 h-32 cursor-pointer transition-transform duration-300 hover:scale-105 ${
+        className={cn(
+          "cursor-pointer transition-transform duration-300 hover:scale-105 aspect-square",
           mood === 'happy' ? 'animate-float' : 
           mood === 'sleep' ? '' : 
-          'animate-breathe'
-        }`}
+          'animate-breathe',
+          className || "w-32 h-32"
+        )}
       >
         <CharacterSVG mood={mood} />
       </div>
 
       {/* Character name */}
-      <p className="mt-2 text-white/50 text-xs">Momo</p>
+      <p className="mt-4 text-white/50 text-sm font-medium tracking-wider uppercase">Momo</p>
     </div>
   );
 };

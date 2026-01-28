@@ -98,6 +98,8 @@ function App() {
     }
   };
 
+  const isFocusMode = timer.isRunning;
+
   return (
     <div className={`h-screen w-screen overflow-hidden flex flex-col transition-all duration-1000 ${sceneGradient}`}>
       {/* Background overlay */}
@@ -217,25 +219,28 @@ function App() {
 
         {/* Main area */}
         <main className="flex-1 flex items-center justify-center p-4 sm:p-8 min-h-0">
-          <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-8 h-full max-h-[650px]">
+          <div className="w-full max-w-7xl grid lg:grid-cols-3 gap-8 h-full max-h-[650px] transition-all duration-500">
             {/* Left panel - Character & Timer */}
-            <div className="lg:col-span-2 glass rounded-3xl p-0 flex flex-col lg:flex-row overflow-hidden relative">
+            <div className={`glass rounded-3xl p-0 flex flex-col lg:flex-row overflow-hidden relative transition-all duration-500 ${
+              isFocusMode ? 'lg:col-span-3' : 'lg:col-span-2'
+            }`}>
               
               {/* Character Section - Left side on desktop */}
-              <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative">
-                 <div className="transform scale-[2] lg:scale-[2.5] hover:scale-[2.6] transition-transform duration-500">
+              <div className="flex-1 flex items-center justify-center bg-white/5 border-b lg:border-b-0 lg:border-r border-white/10 relative p-8">
+                 <div className="flex items-center justify-center w-full h-full">
                     <Character
                       mood={character.character.mood}
                       message={character.character.message}
                       showBubble={character.showBubble}
                       onClick={() => character.showMessage('Keep going! You\'re doing great! ✨')}
+                      className="w-48 h-48 lg:w-80 lg:h-80"
                     />
                  </div>
               </div>
 
               {/* Timer Section - Right side on desktop */}
-              <div className="flex-1 flex items-center justify-center p-8">
-                  <div className="transform scale-100 lg:scale-110">
+              <div className="flex-1 flex items-center justify-center p-8 transition-all duration-500">
+                  <div className={`transform transition-all duration-500 ${isFocusMode ? 'scale-105 lg:scale-110' : 'scale-95 lg:scale-100'}`}>
                     <Timer
                       mode={timer.mode}
                       formattedTime={timer.formattedTime}
@@ -261,7 +266,7 @@ function App() {
             </div>
 
             {/* Right panel - Side panels */}
-            <div className="hidden lg:block h-full">
+            <div className={`transition-all duration-500 overflow-hidden ${isFocusMode ? 'w-0 opacity-0 hidden' : 'w-full opacity-100 hidden lg:block h-full'}`}>
               <div className="glass rounded-3xl p-6 h-full">
                 {showTasks && (
                   <div className="h-full animate-slide-in">
