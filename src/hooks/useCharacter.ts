@@ -67,7 +67,7 @@ const characterMessages: CharacterMessage[] = [
 ];
 
 // Special event messages
-const eventMessages = {
+export const eventMessages = {
   timerStart: [
     "Let's get started! Focus time begins now! 🎯",
     "Timer started! You can do this! 💪",
@@ -98,12 +98,12 @@ const eventMessages = {
   ],
 };
 
-const getRandomEventMessage = (event: keyof typeof eventMessages): string => {
+export const getRandomEventMessage = (event: keyof typeof eventMessages): string => {
   const messages = eventMessages[event];
   return messages[Math.floor(Math.random() * messages.length)];
 };
 
-const getRandomMessage = (mood: CharacterMood): string => {
+export const getRandomMessage = (mood: CharacterMood): string => {
   const messages =
     characterMessages.find((m) => m.mood === mood)?.messages || [];
   return messages[Math.floor(Math.random() * messages.length)];
@@ -248,5 +248,6 @@ export function useCharacter(
     hideBubble,
     config, // Export config
     updateConfig, // Export updater
+    currentMood, // Export current mood for AI context
   };
 }
