@@ -146,13 +146,27 @@ export const Settings: React.FC<SettingsProps> = ({
             min={5}
             max={45}
             step={5}
+            max={45}
+            step={5}
           />
         </div>
-      </TabsContent>
-    </Tabs>
-    </div>
-  );
-};
+
+        {/* Sessions before long break */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-white/70 text-sm">Sessions Before Long Break</label>
+            <span className="text-white text-sm font-medium">
+              {localSettings.sessionsBeforeLongBreak}
+            </span>
+          </div>
+          <Slider
+            value={[localSettings.sessionsBeforeLongBreak]}
+            onValueChange={([v]) => updateSetting('sessionsBeforeLongBreak', v)}
+            min={2}
+            max={8}
+            step={1}
+          />
+        </div>
         
         {/* Auto Start Options */}
         <div className="flex items-center justify-between">
@@ -171,6 +185,27 @@ export const Settings: React.FC<SettingsProps> = ({
             />
         </div>
 
+        {/* Reset button */}
+        <div className="pt-6">
+            <Button
+            variant="outline"
+            onClick={() => {
+                const defaultSettings = {
+                workDuration: 25 * 60,
+                shortBreakDuration: 5 * 60,
+                longBreakDuration: 15 * 60,
+                sessionsBeforeLongBreak: 4,
+                autoStartBreaks: false,
+                autoStartPomodoros: false,
+                };
+                setLocalSettings(defaultSettings);
+                onUpdateSettings(defaultSettings);
+            }}
+            className="w-full border-white/20 text-white/70 hover:text-white hover:bg-white/10"
+            >
+            Reset Timer Defaults
+            </Button>
+        </div>
       </TabsContent>
       
       <TabsContent value="character" className="space-y-6">
@@ -295,79 +330,8 @@ export const Settings: React.FC<SettingsProps> = ({
                           </div>
                       </div>
                  </div>
-              </>
-          )}
-
       </TabsContent>
     </Tabs>
-    </div>
-  );
-};
-
-        {/* Sessions before long break */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-white/70 text-sm">Sessions Before Long Break</label>
-            <span className="text-white text-sm font-medium">
-              {localSettings.sessionsBeforeLongBreak}
-            </span>
-          </div>
-          <Slider
-            value={[localSettings.sessionsBeforeLongBreak]}
-            onValueChange={([v]) => updateSetting('sessionsBeforeLongBreak', v)}
-            min={2}
-            max={8}
-            step={1}
-          />
-        </div>
-
-        {/* Auto-start options */}
-        <div className="space-y-3 pt-4 border-t border-white/10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Bell className="w-4 h-4 text-white/50" />
-              <span className="text-white/70 text-sm">Auto-start Breaks</span>
-            </div>
-            <Switch
-              checked={localSettings.autoStartBreaks}
-              onCheckedChange={(v) => updateSetting('autoStartBreaks', v)}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Volume2 className="w-4 h-4 text-white/50" />
-              <span className="text-white/70 text-sm">Auto-start Focus</span>
-            </div>
-            <Switch
-              checked={localSettings.autoStartPomodoros}
-              onCheckedChange={(v) => updateSetting('autoStartPomodoros', v)}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Reset button */}
-      <div className="mt-auto pt-6">
-        <Button
-          variant="outline"
-          onClick={() => {
-            const defaultSettings = {
-              workDuration: 25 * 60,
-              shortBreakDuration: 5 * 60,
-              longBreakDuration: 15 * 60,
-              sessionsBeforeLongBreak: 4,
-              autoStartBreaks: false,
-              autoStartPomodoros: false,
-            };
-            setLocalSettings(defaultSettings);
-            onUpdateSettings(defaultSettings);
-          }}
-          className="w-full border-white/20 text-white/70 hover:text-white hover:bg-white/10"
-        >
-          Reset to Defaults
-        </Button>
-      </div>
     </div>
   );
 };
