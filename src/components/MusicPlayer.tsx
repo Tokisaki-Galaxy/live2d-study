@@ -1,9 +1,20 @@
-import React, { useRef, useState } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Upload, Trash2, Music, FolderOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import type { Track } from '@/types';
+import React, { useRef, useState } from "react";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeX,
+  Upload,
+  Trash2,
+  Music,
+  FolderOpen,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Track } from "@/types";
 
 interface MusicPlayerProps {
   isPlaying: boolean;
@@ -43,12 +54,12 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('audio/')) {
+    if (file && file.type.startsWith("audio/")) {
       onAddTrack(file);
     }
     // Reset input
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -59,7 +70,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
     }
     // Reset input
     if (folderInputRef.current) {
-      folderInputRef.current.value = '';
+      folderInputRef.current.value = "";
     }
   };
 
@@ -97,10 +108,10 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-white font-medium truncate">
-              {currentTrack?.title || 'No track selected'}
+              {currentTrack?.title || "No track selected"}
             </h4>
             <p className="text-white/50 text-sm truncate">
-              {currentTrack?.artist || 'Select a track to play'}
+              {currentTrack?.artist || "Select a track to play"}
             </p>
           </div>
         </div>
@@ -202,7 +213,11 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
           <input
             ref={folderInputRef}
             type="file"
-            {...{ webkitdirectory: '', directory: '', mozdirectory: '' } as any}
+            {...({
+              webkitdirectory: "",
+              directory: "",
+              mozdirectory: "",
+            } as React.InputHTMLAttributes<HTMLInputElement>)}
             onChange={handleFolderUpload}
             className="hidden"
           />
@@ -216,8 +231,8 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
                 onClick={() => onSelectTrack(index)}
                 className={`group flex items-center gap-3 p-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
                   currentIndex === index
-                    ? 'bg-violet-500/20 border border-violet-500/30'
-                    : 'hover:bg-white/5'
+                    ? "bg-violet-500/20 border border-violet-500/30"
+                    : "hover:bg-white/5"
                 }`}
               >
                 {/* Track number or playing indicator */}
@@ -229,9 +244,13 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
                       <div className="w-1 h-2 bg-violet-400 animate-pulse delay-150" />
                     </div>
                   ) : (
-                    <span className={`text-xs ${
-                      currentIndex === index ? 'text-violet-400' : 'text-white/30'
-                    }`}>
+                    <span
+                      className={`text-xs ${
+                        currentIndex === index
+                          ? "text-violet-400"
+                          : "text-white/30"
+                      }`}
+                    >
                       {index + 1}
                     </span>
                   )}
@@ -239,9 +258,11 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
 
                 {/* Track info */}
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm truncate ${
-                    currentIndex === index ? 'text-white' : 'text-white/70'
-                  }`}>
+                  <p
+                    className={`text-sm truncate ${
+                      currentIndex === index ? "text-white" : "text-white/70"
+                    }`}
+                  >
                     {track.title}
                   </p>
                   <p className="text-xs text-white/40 truncate">
@@ -250,7 +271,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
                 </div>
 
                 {/* Remove button for custom tracks */}
-                {track.artist === 'Custom' && (
+                {track.artist === "Custom" && (
                   <Button
                     variant="ghost"
                     size="icon"

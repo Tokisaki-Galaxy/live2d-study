@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
-import { Plus, Check, Trash2, Edit2, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import type { Task } from '@/types';
+import React, { useState, useRef } from "react";
+import { Plus, Check, Trash2, Edit2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Task } from "@/types";
 
 interface TaskListProps {
   tasks: Task[];
@@ -24,20 +24,20 @@ export const TaskList: React.FC<TaskListProps> = ({
   completedCount,
   pendingCount,
 }) => {
-  const [newTask, setNewTask] = useState('');
+  const [newTask, setNewTask] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState('');
+  const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAdd = () => {
     if (newTask.trim()) {
       onAddTask(newTask);
-      setNewTask('');
+      setNewTask("");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleAdd();
     }
   };
@@ -52,19 +52,19 @@ export const TaskList: React.FC<TaskListProps> = ({
     if (editingId && editValue.trim()) {
       onEditTask(editingId, editValue);
       setEditingId(null);
-      setEditValue('');
+      setEditValue("");
     }
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setEditValue('');
+    setEditValue("");
   };
 
   const handleEditKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       saveEdit();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       cancelEdit();
     }
   };
@@ -113,8 +113,8 @@ export const TaskList: React.FC<TaskListProps> = ({
                 key={task.id}
                 className={`group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
                   task.completed
-                    ? 'bg-white/5'
-                    : 'bg-white/10 hover:bg-white/15'
+                    ? "bg-white/5"
+                    : "bg-white/10 hover:bg-white/15"
                 }`}
               >
                 {/* Checkbox */}
@@ -122,8 +122,8 @@ export const TaskList: React.FC<TaskListProps> = ({
                   onClick={() => onToggleTask(task.id)}
                   className={`flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${
                     task.completed
-                      ? 'bg-emerald-500 border-emerald-500'
-                      : 'border-white/30 hover:border-white/50'
+                      ? "bg-emerald-500 border-emerald-500"
+                      : "border-white/30 hover:border-white/50"
                   }`}
                 >
                   {task.completed && <Check className="w-3 h-3 text-white" />}
@@ -162,8 +162,8 @@ export const TaskList: React.FC<TaskListProps> = ({
                     <span
                       className={`flex-1 text-sm transition-all duration-200 ${
                         task.completed
-                          ? 'text-white/40 line-through'
-                          : 'text-white'
+                          ? "text-white/40 line-through"
+                          : "text-white"
                       }`}
                     >
                       {task.title}
@@ -201,9 +201,7 @@ export const TaskList: React.FC<TaskListProps> = ({
         <div className="mt-4 pt-4 border-t border-white/10">
           <div className="flex items-center justify-between text-xs text-white/40">
             <span>Progress</span>
-            <span>
-              {Math.round((completedCount / tasks.length) * 100)}%
-            </span>
+            <span>{Math.round((completedCount / tasks.length) * 100)}%</span>
           </div>
           <div className="mt-2 h-1.5 bg-white/10 rounded-full overflow-hidden">
             <div

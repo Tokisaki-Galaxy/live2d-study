@@ -1,14 +1,23 @@
 // Sound effects utility using Web Audio API
 // This generates simple procedural sound effects without needing audio files
 
-export type SoundEffect = 'timer-start' | 'timer-end' | 'timer-warning';
+// Extend Window type to include webkit prefixed AudioContext
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
+
+export type SoundEffect = "timer-start" | "timer-end" | "timer-warning";
 
 class SoundManager {
   private audioContext: AudioContext | null = null;
 
   private getAudioContext(): AudioContext {
     if (!this.audioContext) {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
     }
     return this.audioContext;
   }
@@ -29,7 +38,7 @@ class SoundManager {
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
 
-      oscillator.type = 'sine';
+      oscillator.type = "sine";
       oscillator.frequency.value = freq;
 
       const startTime = now + index * 0.15;
@@ -51,17 +60,17 @@ class SoundManager {
 
     // Play a nice chord (C major -> D major)
     const chord1 = [523.25, 659.25, 783.99]; // C5, E5, G5
-    const chord2 = [587.33, 739.99, 880.00]; // D5, F#5, A5
+    const chord2 = [587.33, 739.99, 880.0]; // D5, F#5, A5
 
     // First chord
-    chord1.forEach(freq => {
+    chord1.forEach((freq) => {
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
 
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
 
-      oscillator.type = 'sine';
+      oscillator.type = "sine";
       oscillator.frequency.value = freq;
 
       gainNode.gain.setValueAtTime(0, now);
@@ -73,14 +82,14 @@ class SoundManager {
     });
 
     // Second chord
-    chord2.forEach(freq => {
+    chord2.forEach((freq) => {
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
 
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
 
-      oscillator.type = 'sine';
+      oscillator.type = "sine";
       oscillator.frequency.value = freq;
 
       const startTime = now + 0.3;
@@ -108,7 +117,7 @@ class SoundManager {
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
 
-      oscillator.type = 'sine';
+      oscillator.type = "sine";
       oscillator.frequency.value = 880; // A5 - gentle tone
 
       const startTime = now + i * 0.4;
@@ -127,18 +136,18 @@ class SoundManager {
   play(effect: SoundEffect) {
     try {
       switch (effect) {
-        case 'timer-start':
+        case "timer-start":
           this.playTimerStart();
           break;
-        case 'timer-end':
+        case "timer-end":
           this.playTimerEnd();
           break;
-        case 'timer-warning':
+        case "timer-warning":
           this.playTimerWarning();
           break;
       }
     } catch (error) {
-      console.warn('Failed to play sound:', error);
+      console.warn("Failed to play sound:", error);
     }
   }
 }
